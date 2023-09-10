@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Web", "Horscht.Web\Horscht.Web.csproj", "{874CC117-7B25-47EE-9EA0-51738DF942E0}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Horscht.Deployment", "Horscht.Deployment\Horscht.Deployment.deployproj", "{92871690-375B-4A73-BA6F-DFA0AA45DE08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{874CC117-7B25-47EE-9EA0-51738DF942E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874CC117-7B25-47EE-9EA0-51738DF942E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874CC117-7B25-47EE-9EA0-51738DF942E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874CC117-7B25-47EE-9EA0-51738DF942E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92871690-375B-4A73-BA6F-DFA0AA45DE08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92871690-375B-4A73-BA6F-DFA0AA45DE08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92871690-375B-4A73-BA6F-DFA0AA45DE08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92871690-375B-4A73-BA6F-DFA0AA45DE08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B6C0AFE8-8FBA-4258-989E-37CF79DD9534}
+	EndGlobalSection
+EndGlobal
