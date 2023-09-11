@@ -1,9 +1,12 @@
 param environment string
 param location string = deployment().location
+param adminUserIds string
+
+targetScope = 'subscription'
 
 var shortLocation = location == 'westeurope' ? 'weu' : location == 'germanywestcentral' ? 'gwc' : location
 
-targetScope = 'subscription'
+var adminUserIdList = split(adminUserIds, ',')
 
 resource rg 'Microsoft.Resources/resourceGroups@2023-07-01' = {
 	name: 'rg-horscht-${shortLocation}-${environment}'
@@ -17,5 +20,6 @@ module Storage 'storage.bicep' = {
 		environment: environment
 		location: location
 		shortLocation: shortLocation
+		adminUsers: adminUserIdList
 	}
 }
