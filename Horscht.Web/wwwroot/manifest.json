@@ -1,6 +1,6 @@
 {
-  "name": "Horscht.Web",
-  "short_name": "Horscht.Web",
+  "name": "Horscht WebAssembly",
+  "short_name": "Horscht.WebAssembly",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
