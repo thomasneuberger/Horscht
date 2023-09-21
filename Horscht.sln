@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Web", "Horscht.Web\
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Horscht.Deployment", "Horscht.Deployment\Horscht.Deployment.deployproj", "{92871690-375B-4A73-BA6F-DFA0AA45DE08}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horscht.App", "Horscht.App\Horscht.App.csproj", "{808BBB4F-1C2D-4348-8432-403B7DD5F6BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{92871690-375B-4A73-BA6F-DFA0AA45DE08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92871690-375B-4A73-BA6F-DFA0AA45DE08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92871690-375B-4A73-BA6F-DFA0AA45DE08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{808BBB4F-1C2D-4348-8432-403B7DD5F6BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{808BBB4F-1C2D-4348-8432-403B7DD5F6BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{808BBB4F-1C2D-4348-8432-403B7DD5F6BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{808BBB4F-1C2D-4348-8432-403B7DD5F6BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
