@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Horscht.App.Services
+
+@inject IAuthenticationService AuthenticationService
+
+<AuthorizeView>
+    <Authorized>
+        Hello, @context.User.Identity?.Name!
+        <button class="nav-link btn btn-link" @onclick="BeginLogOutAsync">Log out</button>
+    </Authorized>
+    <NotAuthorized>
+        <button class="nav-link btn btn-link" @onclick="BeginLoginAsync">Log in</button>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+
+    public async Task BeginLoginAsync()
+    {
+        await AuthenticationService.LoginAsync(CancellationToken.None);
+    }
+
+    public async Task BeginLogOutAsync()
+    {
+        await AuthenticationService.LogoutAsync(CancellationToken.None);
+    }
+}

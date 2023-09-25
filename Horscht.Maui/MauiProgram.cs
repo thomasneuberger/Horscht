@@ -1,4 +1,8 @@
-﻿using Horscht.Maui.Data;
+﻿using Horscht.App.Services;
+using Horscht.Maui.Authentication;
+using Horscht.Maui.Data;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Horscht.Maui;
@@ -20,8 +24,11 @@ public static class MauiProgram
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
+        builder.Services.AddAuthorizationCore();
+        builder.Services.TryAddScoped<AuthenticationStateProvider, AuthenticationStateService>();
 
         builder.Services.AddSingleton<WeatherForecastService>();
+        builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         return builder.Build();
     }
