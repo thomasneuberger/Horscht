@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Horscht.App.Services;
+﻿using Horscht.App.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
 namespace Horscht.Maui.Authentication;
