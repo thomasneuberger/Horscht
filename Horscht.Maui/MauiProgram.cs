@@ -2,6 +2,7 @@
 using Horscht.Maui.Authentication;
 using Horscht.Maui.Data;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
@@ -20,12 +21,19 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
 
+        builder.Configuration
+            .AddJsonFile("appsettings.json");
+
+        builder.Services.AddOptions<AuthenticationOptions>()
+            .Bind(builder.Configuration.GetSection("AzureAd"))
+            .ValidateDataAnnotations();
+
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
 
-        builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
+        builder.Services.AddSingleton(SecureStorage.Default);
         builder.Services.AddAuthorizationCore();
         builder.Services.TryAddScoped<AuthenticationStateProvider, AuthenticationStateService>();
 

@@ -3,6 +3,8 @@ using Microsoft.Identity.Client;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Horscht.App.Authentication;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace Horscht.Maui.Authentication;
@@ -15,17 +17,16 @@ public class AuthenticationService : IAuthenticationService
 
     private MsalCacheHelper? _cacheHelper;
 
-    public AuthenticationService(ISecureStorage secureStorage)
+    public AuthenticationService(ISecureStorage secureStorage, IOptions<AuthenticationOptions> authenticationOptions)
     {
         _secureStorage = secureStorage;
 
-        _authenticationClient = PublicClientApplicationBuilder.Create(Constants.ClientId)
-            .WithTenantId(Constants.TenantId)
-            //.WithB2CAuthority(Constants.AuthoritySignIn) // uncomment to support B2C
+        _authenticationClient = PublicClientApplicationBuilder.Create(authenticationOptions.Value.ClientId)
+            .WithTenantId(authenticationOptions.Value.TenantId)
 #if WINDOWS
             .WithRedirectUri("http://localhost")
 #else
-            .WithRedirectUri($"msal{Constants.ClientId}://auth")
+            .WithRedirectUri($"msal{authenticationOptions.Value.ClientId}://auth")
 #endif
             .Build();
     }
@@ -78,7 +79,7 @@ public class AuthenticationService : IAuthenticationService
             if (account is null)
             {
                 result = await _authenticationClient
-                        .AcquireTokenInteractive(Constants.Scopes)
+                        .AcquireTokenInteractive(AuthenticationConstants.Scopes)
                         .WithPrompt(Prompt.ForceLogin)
 #if ANDROID
                 .WithParentActivityOrWindow(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity)
@@ -91,7 +92,7 @@ public class AuthenticationService : IAuthenticationService
             else
             {
                 result = await _authenticationClient
-                    .AcquireTokenSilent(Constants.Scopes, account)
+                    .AcquireTokenSilent(AuthenticationConstants.Scopes, account)
                     .ExecuteAsync(cancellationToken);
             }
 

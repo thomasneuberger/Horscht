@@ -54,6 +54,9 @@
       <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.11" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
       <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="7.0.0" />
       <PackageReference Include="Microsoft.Identity.Client" Version="4.56.0" />
       <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.56.0" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.0" />
