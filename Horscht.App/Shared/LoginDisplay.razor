@@ -17,7 +17,7 @@
 
     public async Task BeginLoginAsync()
     {
-        await AuthenticationService.LoginAsync(CancellationToken.None);
+        await AuthenticationService.LoginInteractiveAsync(CancellationToken.None);
     }
 
     public async Task BeginLogOutAsync()

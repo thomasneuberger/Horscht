@@ -24,6 +24,8 @@ public static class MauiProgram
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
+
+        builder.Services.AddSingleton<ISecureStorage>(SecureStorage.Default);
         builder.Services.AddAuthorizationCore();
         builder.Services.TryAddScoped<AuthenticationStateProvider, AuthenticationStateService>();
 

@@ -7,7 +7,9 @@ public interface IAuthenticationService
 
     event EventHandler<ClaimsIdentity?> CurrentUserChanged;
 
-    Task LoginAsync(CancellationToken cancellationToken);
+    Task TryLoginSilentAsync(CancellationToken cancellationToken);
+
+    Task LoginInteractiveAsync(CancellationToken cancellationToken);
 
     Task LogoutAsync(CancellationToken cancellationToken);
 }
