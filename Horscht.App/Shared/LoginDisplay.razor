@@ -7,6 +7,7 @@
     <Authorized>
         Hello, @context.User.Identity?.Name!
         <button class="nav-link btn btn-link" @onclick="BeginLogOutAsync">Log out</button>
+        <NavLink class="nav-link btn btn-link" href="/about">About</NavLink>
     </Authorized>
     <NotAuthorized>
         <button class="nav-link btn btn-link" @onclick="BeginLoginAsync">Log in</button>
