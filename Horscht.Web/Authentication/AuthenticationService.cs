@@ -37,6 +37,11 @@ public class AuthenticationService : IAuthenticationService, IDisposable
 
     public event EventHandler<ClaimsIdentity?>? CurrentUserChanged;
 
+    public Task TryLoginSilentAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task LoginInteractiveAsync(CancellationToken cancellationToken)
     {
         _navigationManager.NavigateToLogin("authentication/login");
