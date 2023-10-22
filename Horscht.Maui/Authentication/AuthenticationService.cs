@@ -1,11 +1,11 @@
-﻿using Horscht.App.Services;
+﻿using Horscht.App.Authentication;
+using Horscht.App.Services;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Client.Extensions.Msal;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Horscht.App.Authentication;
-using Microsoft.Extensions.Options;
-using Microsoft.Identity.Client.Extensions.Msal;
 
 namespace Horscht.Maui.Authentication;
 public class AuthenticationService : IAuthenticationService
@@ -41,60 +41,69 @@ public class AuthenticationService : IAuthenticationService
             var storageProperties = new StorageCreationPropertiesBuilder("LoginCache", FileSystem.CacheDirectory)
                 .Build();
 
-            _cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties);
+            _cacheHelper = await MsalCacheHelper.CreateAsync(storageProperties)
+                .ConfigureAwait(false);
             _cacheHelper.RegisterCache(_authenticationClient.UserTokenCache);
         }
     }
 
     public async Task TryLoginSilentAsync(CancellationToken cancellationToken)
     {
-        await EnsureRegisteredCache();
+        var account = await GetAccountFromCache()
+            .ConfigureAwait(false);
 
-        var identifier = await _secureStorage.GetAsync(AccountIdentifierKey);
-        if (!string.IsNullOrWhiteSpace(identifier))
+        if (account is not null)
         {
-            var account = await _authenticationClient.GetAccountAsync(identifier);
-
-            if (account is not null)
-            {
-                await LoginAsync(cancellationToken, account);
-            }
+            await LoginAsync(account, cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 
     public async Task LoginInteractiveAsync(CancellationToken cancellationToken)
     {
-        await EnsureRegisteredCache();
+        await EnsureRegisteredCache()
+            .ConfigureAwait(false);
 
-        await LoginAsync(cancellationToken, null);
+        await LoginAsync(null, cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    private async Task LoginAsync(CancellationToken cancellationToken, IAccount? account)
+    private async Task<IAccount?> GetAccountFromCache()
+    {
+        await EnsureRegisteredCache()
+            .ConfigureAwait(false);
+
+        var identifier = await _secureStorage.GetAsync(AccountIdentifierKey)
+            .ConfigureAwait(false);
+        if (!string.IsNullOrWhiteSpace(identifier))
+        {
+            var account = await _authenticationClient.GetAccountAsync(identifier)
+                .ConfigureAwait(false);
+
+            return account;
+        }
+
+        return null;
+    }
+
+    public async Task<string?> GetAccessTokenAsync(string[] scopes, CancellationToken cancellationToken)
+    {
+        var account = await GetAccountFromCache()
+            .ConfigureAwait(false);
+
+        var token = await AcquireTokenAsync(account, scopes, cancellationToken);
+
+        return token.AccessToken;
+    }
+
+    private async Task LoginAsync(IAccount? account, CancellationToken cancellationToken)
     {
         try
         {
             _secureStorage.Remove(AccountIdentifierKey);
 
-            AuthenticationResult result;
-            if (account is null)
-            {
-                result = await _authenticationClient
-                        .AcquireTokenInteractive(AuthenticationConstants.Scopes)
-                        .WithPrompt(Prompt.ForceLogin)
-#if ANDROID
-                .WithParentActivityOrWindow(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity)
-#endif
-#if WINDOWS
-                .WithUseEmbeddedWebView(false)
-#endif
-                        .ExecuteAsync(cancellationToken);
-            }
-            else
-            {
-                result = await _authenticationClient
-                    .AcquireTokenSilent(AuthenticationConstants.Scopes, account)
-                    .ExecuteAsync(cancellationToken);
-            }
+            var result = await AcquireTokenAsync(account, AuthenticationConstants.Scopes, cancellationToken)
+                .ConfigureAwait(false);
 
             if (result.IdToken != null)
             {
@@ -116,7 +125,8 @@ public class AuthenticationService : IAuthenticationService
                         var identifier = result.Account.HomeAccountId?.Identifier;
                         if (identifier is not null)
                         {
-                            await _secureStorage.SetAsync(AccountIdentifierKey, identifier);
+                            await _secureStorage.SetAsync(AccountIdentifierKey, identifier)
+                                .ConfigureAwait(false);
                         }
                     }
 
@@ -136,6 +146,45 @@ public class AuthenticationService : IAuthenticationService
         NotifyCurrentUserChanged();
     }
 
+    private async Task<AuthenticationResult> AcquireTokenAsync(IAccount? account, string[] scopes, CancellationToken cancellationToken)
+    {
+        AuthenticationResult result;
+        if (account is null)
+        {
+            result = await _authenticationClient
+                .AcquireTokenInteractive(scopes)
+                .WithPrompt(Prompt.ForceLogin)
+#if ANDROID
+                .WithParentActivityOrWindow(Platform.CurrentActivity)
+#endif
+#if WINDOWS
+                .WithUseEmbeddedWebView(false)
+#endif
+                .ExecuteAsync(cancellationToken)
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            try
+            {
+                result = await _authenticationClient
+                    .AcquireTokenSilent(scopes, account)
+                    .ExecuteAsync(cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch (MsalUiRequiredException)
+            {
+                result = await _authenticationClient
+                    .AcquireTokenInteractive(scopes)
+                    .WithLoginHint(account.Username)
+                    .ExecuteAsync(cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
+
+        return result;
+    }
+
     public async Task LogoutAsync(CancellationToken cancellationToken)
     {
         CurrentUser = null;
@@ -145,7 +194,8 @@ public class AuthenticationService : IAuthenticationService
 
         foreach (var account in accounts)
         {
-            await _authenticationClient.RemoveAsync(account);
+            await _authenticationClient.RemoveAsync(account)
+                .ConfigureAwait(false);
         }
 
         NotifyCurrentUserChanged();

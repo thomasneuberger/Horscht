@@ -12,4 +12,5 @@ public interface IAuthenticationService
     Task LoginInteractiveAsync(CancellationToken cancellationToken);
 
     Task LogoutAsync(CancellationToken cancellationToken);
+    Task<string?> GetAccessTokenAsync(string[] scopes, CancellationToken cancellationToken);
 }
