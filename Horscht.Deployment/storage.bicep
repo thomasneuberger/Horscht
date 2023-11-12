@@ -3,7 +3,7 @@ param location string = resourceGroup().location
 param shortLocation string
 param adminUsers string[]
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: 'sthorscht${shortLocation}${environment}'
   location: location
   kind: 'StorageV2'
@@ -13,6 +13,35 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   properties: {
     minimumTlsVersion: 'TLS1_2'
     supportsHttpsTrafficOnly: true
+  }
+}
+
+resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
+  name: 'default'
+  parent: storageAccount
+  properties: {
+    cors: {
+      corsRules: [
+        {
+          allowedHeaders: [
+            '*'
+          ]
+          allowedMethods: [
+            'GET'
+            'POST'
+            'PUT'
+            'GET'
+            'DELETE'
+          ]
+          allowedOrigins: [
+            'https://localhost:7043'
+            'https://localhost'
+          ]
+          exposedHeaders: []
+          maxAgeInSeconds: 60
+        }
+      ]
+    }
   }
 }
 

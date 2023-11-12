@@ -13,4 +13,7 @@ public class AuthenticationOptions
 
     [Required]
     public required string ClientId { get; set; }
+
+    [Required]
+    public required string Audience { get; set; }
 }

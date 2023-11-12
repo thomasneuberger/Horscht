@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
-using Horscht.App.Services;
+using Horscht.Contracts.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.Graph;
+using AccessToken = Azure.Core.AccessToken;
 
 namespace Horscht.Web.Authentication;
 
@@ -12,10 +14,13 @@ public class AuthenticationService : IAuthenticationService, IDisposable
 
     private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-    public AuthenticationService(NavigationManager navigationManager, AuthenticationStateProvider authenticationStateProvider)
+    private readonly IAccessTokenProvider _accessTokenProvider;
+
+    public AuthenticationService(NavigationManager navigationManager, AuthenticationStateProvider authenticationStateProvider, IAccessTokenProvider accessTokenProvider)
     {
         _navigationManager = navigationManager;
         _authenticationStateProvider = authenticationStateProvider;
+        _accessTokenProvider = accessTokenProvider;
 
         _authenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
     }
@@ -54,6 +59,25 @@ public class AuthenticationService : IAuthenticationService, IDisposable
         _navigationManager.NavigateToLogout("authentication/logout");
 
         await Task.CompletedTask;
+    }
+
+    public async Task<AccessToken?> GetAccessTokenAsync(string[] scopes, CancellationToken cancellationToken)
+    {
+        var options = new AccessTokenRequestOptions
+        {
+            Scopes = scopes
+        };
+        var result = await _accessTokenProvider.RequestAccessToken(options);
+
+        if (result is not null)
+        {
+            if (result.TryGetToken(out var token))
+            {
+                return new AccessToken(token.Value, token.Expires);
+            }
+        }
+
+        return null;
     }
 
     public void Dispose()

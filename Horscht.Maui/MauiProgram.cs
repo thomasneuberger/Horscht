@@ -1,7 +1,11 @@
-﻿using Horscht.App.Services;
+﻿using Horscht.App;
+using Horscht.App.Shared;
+using Horscht.Contracts.Services;
+using Horscht.Logic;
 using Horscht.Maui.Authentication;
 using Horscht.Maui.Data;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -22,7 +26,8 @@ public static class MauiProgram
         builder.Services.AddMauiBlazorWebView();
 
         builder.Configuration
-            .AddJsonFile("appsettings.json");
+            .AddJsonFile("appsettings.json")
+            .AddUserSecrets<MainLayout>();
 
         builder.Services.AddOptions<AuthenticationOptions>()
             .Bind(builder.Configuration.GetSection("AzureAd"))
@@ -35,10 +40,13 @@ public static class MauiProgram
 
         builder.Services.AddSingleton(SecureStorage.Default);
         builder.Services.AddAuthorizationCore();
-        builder.Services.TryAddScoped<AuthenticationStateProvider, AuthenticationStateService>();
+        builder.Services.AddScoped<AuthenticationStateProvider, AuthenticationStateService>();
+        //builder.Services.AddScoped<IAccessTokenProvider, AccessTokenProvider>();
 
         builder.Services.AddSingleton<WeatherForecastService>();
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+        builder.Services.AddSharedHorschtServices(builder.Configuration);
 
         return builder.Build();
     }

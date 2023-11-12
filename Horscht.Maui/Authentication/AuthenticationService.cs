@@ -1,11 +1,12 @@
 ﻿using Horscht.App.Authentication;
-using Horscht.App.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Extensions.Msal;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Azure.Core;
+using Horscht.Contracts.Services;
 
 namespace Horscht.Maui.Authentication;
 public class AuthenticationService : IAuthenticationService
@@ -86,14 +87,14 @@ public class AuthenticationService : IAuthenticationService
         return null;
     }
 
-    public async Task<string?> GetAccessTokenAsync(string[] scopes, CancellationToken cancellationToken)
+    public async Task<AccessToken?> GetAccessTokenAsync(string[] scopes, CancellationToken cancellationToken)
     {
         var account = await GetAccountFromCache()
             .ConfigureAwait(false);
 
         var token = await AcquireTokenAsync(account, scopes, cancellationToken);
 
-        return token.AccessToken;
+        return string.IsNullOrWhiteSpace(token.AccessToken) ? null : new AccessToken(token.AccessToken, token.ExpiresOn);
     }
 
     private async Task LoginAsync(IAccount? account, CancellationToken cancellationToken)
@@ -113,6 +114,8 @@ public class AuthenticationService : IAuthenticationService
                 if (jwtToken is not null)
                 {
                     var claims = jwtToken.Claims.ToList();
+                    claims.Add(new Claim("at", result.AccessToken));
+                    claims.Add(new Claim("ate", result.ExpiresOn.ToString()));
                     var stringBuilder = new StringBuilder();
                     stringBuilder.AppendLine($"Name: {claims.FirstOrDefault(x => x.Type.Equals("name"))?.Value}");
                     stringBuilder.AppendLine(

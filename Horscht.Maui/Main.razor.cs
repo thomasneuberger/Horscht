@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Horscht.App.Services;
+using Horscht.Contracts.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace Horscht.Maui;

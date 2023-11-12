@@ -1,3 +1,44 @@
 @page "/upload"
 
+@attribute [Authorize]
+
 <h1>Upload</h1>
+
+<InputFile OnChange="OnFilesSelected" multiple></InputFile>
+
+<table>
+    <thead>
+        <tr>
+            <th>Filename</th>
+            <th>Status</th>
+            <th>
+                <button class="btn btn-primary" @onclick="UploadAllFiles">Upload all</button>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var file in _selectedFiles)
+        {
+            <tr>
+                <td>@file.File.Name</td>
+                <td>
+                    @if (file.IsUploading)
+                    {
+                        <span>Uploading</span>
+                    }
+                    else if (file.IsUploaded)
+                    {
+                        <span>Uploaded</span>
+                    }
+                    else
+                    {
+                        <span>Pending</span>
+                    }
+                </td>
+                <td>
+                    <button class="btn btn-primary" @onclick="async () => await UploadSingleFile(file)">Upload</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

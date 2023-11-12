@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
+using Azure.Core;
 
-namespace Horscht.App.Services;
+namespace Horscht.Contracts.Services;
 public interface IAuthenticationService
 {
     ClaimsIdentity? CurrentUser { get; }
@@ -12,5 +13,6 @@ public interface IAuthenticationService
     Task LoginInteractiveAsync(CancellationToken cancellationToken);
 
     Task LogoutAsync(CancellationToken cancellationToken);
-    Task<string?> GetAccessTokenAsync(string[] scopes, CancellationToken cancellationToken);
+
+    Task<AccessToken?> GetAccessTokenAsync(string[] scopes, CancellationToken cancellationToken);
 }

@@ -1,6 +1,6 @@
-﻿using Horscht.App.Services;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
+using Horscht.Contracts.Services;
 
 namespace Horscht.Maui.Authentication;
 internal class AuthenticationStateService : AuthenticationStateProvider, IDisposable

@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-    <UserSecretsId>719a1ca9-fdf6-41e8-aaa7-b0bf6df0bbae</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Horscht.App\Horscht.App.csproj" />
+    <ProjectReference Include="..\Horscht.Logic\Horscht.Logic.csproj" />
   </ItemGroup>
 
   <ItemGroup>
