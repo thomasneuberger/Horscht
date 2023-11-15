@@ -59,9 +59,9 @@
       <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Identity.Client" Version="4.56.0" />
-      <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.56.0" />
-      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Identity.Client" Version="4.57.0" />
+      <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="4.57.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     </ItemGroup>
 
     <ItemGroup>
