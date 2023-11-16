@@ -1,4 +1,5 @@
-﻿using Horscht.Logic.Options;
+﻿using Horscht.Contracts.Services;
+using Horscht.Logic.Options;
 using Horscht.Logic.Services;
 using Microsoft.Extensions.Configuration;
 
