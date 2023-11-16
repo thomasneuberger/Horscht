@@ -1,11 +1,12 @@
 ﻿using Horscht.App.ViewModels;
 using Horscht.Contracts.Services;
-using Horscht.Logic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace Horscht.App.Pages;
 
+[Authorize]
 public partial class Upload
 {
     [Inject]

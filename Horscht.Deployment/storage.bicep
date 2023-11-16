@@ -45,14 +45,34 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01'
   }
 }
 
+resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2023-01-01' = {
+  name: 'default'
+  parent: storageAccount
+  properties: {}
+}
+
+resource importQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = {
+	name: 'import'
+  parent: queueService
+}
+
 module BuiltInRoles 'builtInRoles.bicep' = {
   name: 'StorageBuiltInRoles'
 }
 
-resource adminPermissions 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = [for user in adminUsers: {
-  name: guid('horscht', environment, 'storage', 'admin', user)
+resource adminBlobPermissions 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = [for user in adminUsers: {
+  name: guid('horscht', environment, 'storage', 'blob', 'admin', user)
   properties: {
     roleDefinitionId: BuiltInRoles.outputs.StorageBlobDataContributor
+    principalId: user
+    principalType: 'User'
+  }
+}]
+
+resource adminQueuePermissions 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = [for user in adminUsers: {
+  name: guid('horscht', environment, 'storage', 'queue', 'admin', user)
+  properties: {
+    roleDefinitionId: BuiltInRoles.outputs.StorageQueueDataContributor
     principalId: user
     principalType: 'User'
   }
