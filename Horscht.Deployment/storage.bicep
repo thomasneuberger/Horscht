@@ -30,7 +30,6 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01'
             'GET'
             'POST'
             'PUT'
-            'GET'
             'DELETE'
           ]
           allowedOrigins: [
@@ -48,11 +47,32 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01'
 resource queueService 'Microsoft.Storage/storageAccounts/queueServices@2023-01-01' = {
   name: 'default'
   parent: storageAccount
-  properties: {}
+  properties: {
+    cors: {
+      corsRules: [
+        {
+          allowedHeaders: [
+            '*'
+          ]
+          allowedMethods: [
+            'GET'
+            'POST'
+            'PUT'
+          ]
+          allowedOrigins: [
+            'https://localhost:7043'
+            'https://localhost'
+          ]
+          exposedHeaders: []
+          maxAgeInSeconds: 60
+        }
+      ]
+    }
+  }
 }
 
 resource importQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2023-01-01' = {
-	name: 'import'
+  name: 'import'
   parent: queueService
 }
 
