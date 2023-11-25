@@ -18,6 +18,8 @@ public static class SharedHorschtExtensions
 
         services.AddUpload();
 
+        services.AddLibrary();
+
         return services;
     }
 }

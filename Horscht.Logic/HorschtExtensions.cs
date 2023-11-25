@@ -41,4 +41,11 @@ public static class HorschtExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddLibrary(this IServiceCollection services)
+    {
+        services.AddScoped<ILibraryService, LibraryService>();
+
+        return services;
+    }
 }

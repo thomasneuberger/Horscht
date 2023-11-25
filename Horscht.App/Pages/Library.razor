@@ -1,0 +1,26 @@
+@page "/library"
+
+<h1>Library</h1>
+
+@if (_loading)
+{
+    <div>Loading</div>
+}
+else
+{
+    <table id="songTable">
+        <thead>
+        <th>Artist</th>
+        <th>Title</th>
+        </thead>
+        <tbody>
+            @foreach (var song in _songs)
+            {
+                <tr>
+                    <td>@song.Artist</td>
+                    <td>@song.Title</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
