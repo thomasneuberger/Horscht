@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "connectionInfo": "App registration: Horscht Importer, Tenant: Neuberger (neuberger-online.de - Microsoft Entra ID)",
+      "type": "identityapp.default"
+    }
+  }
+}

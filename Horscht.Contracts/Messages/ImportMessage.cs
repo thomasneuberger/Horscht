@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace Horscht.Contracts.Messages;
 public class ImportMessage
 {
-    public required string FileUri { get; set; }
+    public required string FileName { get; set; }
 }

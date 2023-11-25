@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.App", "Horscht.App\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Maui", "Horscht.Maui\Horscht.Maui.csproj", "{3DCAD12E-489B-46A7-916D-A852122FB1A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horscht.Logic", "Horscht.Logic\Horscht.Logic.csproj", "{BB7D49EF-43D4-4218-B060-46CAD95C37C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Logic", "Horscht.Logic\Horscht.Logic.csproj", "{BB7D49EF-43D4-4218-B060-46CAD95C37C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horscht.Contracts", "Horscht.Contracts\Horscht.Contracts.csproj", "{EC76B083-819B-4C24-B11C-639EC66600ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Contracts", "Horscht.Contracts\Horscht.Contracts.csproj", "{EC76B083-819B-4C24-B11C-639EC66600ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horscht.Importer", "Horscht.Importer\Horscht.Importer.csproj", "{ED9CA4DF-70BE-4C62-B550-0174057AA717}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{EC76B083-819B-4C24-B11C-639EC66600ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC76B083-819B-4C24-B11C-639EC66600ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC76B083-819B-4C24-B11C-639EC66600ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED9CA4DF-70BE-4C62-B550-0174057AA717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED9CA4DF-70BE-4C62-B550-0174057AA717}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED9CA4DF-70BE-4C62-B550-0174057AA717}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED9CA4DF-70BE-4C62-B550-0174057AA717}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

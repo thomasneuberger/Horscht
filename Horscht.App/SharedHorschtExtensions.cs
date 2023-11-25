@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Horscht.Logic;
+﻿using Horscht.Logic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
+using Horscht.App.Services;
+using Horscht.Contracts.Services;
 
 namespace Horscht.App;
 
@@ -14,12 +11,9 @@ public static class SharedHorschtExtensions
 {
     public static IServiceCollection AddSharedHorschtServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton(new JsonSerializerOptions(JsonSerializerOptions.Default)
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
-        });
+        services.AddJsonSerializerDefaults();
 
+        services.AddScoped<IStorageClientProvider, StorageClientProvider>();
         services.AddStorage(configuration);
 
         services.AddUpload();

@@ -1,67 +1,46 @@
-﻿using System.Text.Json;
-using Azure.Storage.Blobs;
-using Azure.Storage.Queues;
-using Horscht.Contracts;
-using Horscht.Contracts.Messages;
+﻿using Horscht.Contracts.Messages;
+using Horscht.Contracts.Options;
 using Horscht.Contracts.Services;
-using Horscht.Logic.Options;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace Horscht.Logic.Services;
 
 internal class UploadService : IUploadService
 {
-    private readonly IOptions<StorageOptions> _storageOptions;
-    private readonly IAuthenticationService _authenticationService;
+    private readonly IOptions<AppStorageOptions> _storageOptions;
+    private readonly IStorageClientProvider _storageClientProvider;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public UploadService(IOptions<StorageOptions> storageOptions, IAuthenticationService authenticationService, JsonSerializerOptions jsonSerializerOptions)
+    public UploadService(IOptions<AppStorageOptions> storageOptions, JsonSerializerOptions jsonSerializerOptions, IStorageClientProvider storageClientProvider)
     {
         _storageOptions = storageOptions;
-        _authenticationService = authenticationService;
         _jsonSerializerOptions = jsonSerializerOptions;
+        _storageClientProvider = storageClientProvider;
     }
 
     public async Task UploadFile(Stream fileStream, string filename)
     {
         try
         {
-            var containerUri = $"{_storageOptions.Value.BlobUri.TrimEnd('/')}/{_storageOptions.Value.UploadContainer}";
-            var queueUri = $"{_storageOptions.Value.QueueUri.TrimEnd()}/{_storageOptions.Value.ImportQueue}";
+            var blobContainerClient = await _storageClientProvider.GetContainerClient(_storageOptions.Value.UploadContainer);
 
-            var token = await _authenticationService.GetAccessTokenAsync(
-                    new[]
-                    {
-                        StorageConstants.Scope
-                    },
-                    CancellationToken.None)
-                .ConfigureAwait(false);
-            if (token.HasValue)
+            await blobContainerClient.CreateIfNotExistsAsync();
+
+            var blobClient = blobContainerClient.GetBlobClient(filename);
+
+            await blobClient.UploadAsync(fileStream);
+
+            var queueClient = await _storageClientProvider.GetQueueClient(_storageOptions.Value.ImportQueue);
+
+            var message = new ImportMessage
             {
-                var credentials = new AccessTokenCredential(token.Value);
-                var blobContainerClient = new BlobContainerClient(new Uri(containerUri), credentials);
+                FileName = filename
+            };
 
-                await blobContainerClient.CreateIfNotExistsAsync();
+            var serializedMessage = JsonSerializer.Serialize(message, _jsonSerializerOptions);
 
-                var blobClient = blobContainerClient.GetBlobClient(filename);
-
-                await blobClient.UploadAsync(fileStream);
-
-                var queueClient = new QueueClient(new Uri(queueUri), credentials);
-
-                var message = new ImportMessage
-                {
-                    FileUri = blobClient.Uri.AbsoluteUri
-                };
-
-                var serializedMessage = JsonSerializer.Serialize(message, _jsonSerializerOptions);
-
-                var receipt = await queueClient.SendMessageAsync(serializedMessage);
-            }
-            else
-            {
-                throw new UnauthorizedAccessException();
-            }
+            var receipt = await queueClient.SendMessageAsync(serializedMessage);
         }
         catch (Exception ex)
         {

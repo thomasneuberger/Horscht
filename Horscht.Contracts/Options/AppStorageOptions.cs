@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Horscht.Contracts.Options;
 
-namespace Horscht.Logic.Options;
-
-internal class StorageOptions
+public class AppStorageOptions
 {
     public required string BlobUri { get; set; }
 
