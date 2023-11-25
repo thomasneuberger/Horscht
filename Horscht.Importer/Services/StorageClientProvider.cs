@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using Horscht.Contracts.Services;
 using Microsoft.Extensions.Options;
@@ -26,5 +27,12 @@ internal class StorageClientProvider : IStorageClientProvider
         var queueClient = new QueueClient(_storageOptions.Value.ConnectionString, queue);
 
         return await Task.FromResult(queueClient);
+    }
+
+    public async Task<TableClient> GetTableClient(string table)
+    {
+        var tableClient = new TableClient(_storageOptions.Value.ConnectionString, table);
+
+        return await Task.FromResult(tableClient);
     }
 }

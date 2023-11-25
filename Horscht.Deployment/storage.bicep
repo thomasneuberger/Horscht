@@ -97,3 +97,45 @@ resource adminQueuePermissions 'Microsoft.Authorization/roleAssignments@2020-10-
     principalType: 'User'
   }
 }]
+
+resource tableService 'Microsoft.Storage/storageAccounts/tableServices@2023-01-01' = {
+  name: 'default'
+  parent: storageAccount
+  properties: {
+    cors: {
+      corsRules: [
+        {
+          allowedHeaders: [
+            '*'
+          ]
+          allowedMethods: [
+            'GET'
+            'POST'
+            'PUT'
+            'DELETE'
+          ]
+          allowedOrigins: [
+            'https://localhost:7043'
+            'https://localhost'
+          ]
+          exposedHeaders: []
+          maxAgeInSeconds: 60
+        }
+      ]
+    }
+  }
+}
+
+resource songTable 'Microsoft.Storage/storageAccounts/tableServices/tables@2023-01-01' = {
+	name: 'songs'
+  parent: tableService
+}
+
+resource adminTablePermissions 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = [for user in adminUsers: {
+  name: guid('horscht', environment, 'storage', 'table', 'admin', user)
+  properties: {
+    roleDefinitionId: BuiltInRoles.outputs.StorageTableDataContributor
+    principalId: user
+    principalType: 'User'
+  }
+}]

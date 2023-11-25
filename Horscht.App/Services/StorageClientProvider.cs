@@ -1,4 +1,5 @@
 ﻿using Azure.Core;
+using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using Horscht.App.Authentication;
@@ -59,10 +60,18 @@ internal class StorageClientProvider : IStorageClientProvider
 
     public async Task<QueueClient> GetQueueClient(string queue)
     {
-        var queueUri = $"{_storageOptions.Value.QueueUri.TrimEnd()}/{_storageOptions.Value.ImportQueue}";
+        var queueUri = $"{_storageOptions.Value.QueueUri.TrimEnd('/')}/{_storageOptions.Value.ImportQueue}";
         var credentials = await GetCredentials();
         var queueClient = new QueueClient(new Uri(queueUri), credentials);
 
         return queueClient;
+    }
+
+    public async Task<TableClient> GetTableClient(string table)
+    {
+        var credentials = await GetCredentials();
+        var tableClient = new TableClient(new Uri(_storageOptions.Value.TableUri), table, credentials);
+
+        return tableClient;
     }
 }
