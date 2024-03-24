@@ -1,13 +1,9 @@
 ﻿using Horscht.App;
 using Horscht.App.Shared;
 using Horscht.Contracts.Services;
-using Horscht.Logic;
 using Horscht.Maui.Authentication;
-using Horscht.Maui.Data;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace Horscht.Maui;
@@ -43,7 +39,6 @@ public static class MauiProgram
         builder.Services.AddScoped<AuthenticationStateProvider, AuthenticationStateService>();
         //builder.Services.AddScoped<IAccessTokenProvider, AccessTokenProvider>();
 
-        builder.Services.AddSingleton<WeatherForecastService>();
         builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
         builder.Services.AddSharedHorschtServices(builder.Configuration);
