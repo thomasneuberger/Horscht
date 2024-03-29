@@ -27,7 +27,7 @@ jobs:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-
+        
     - name: Create image tag
       id: imageTag
       run: |
