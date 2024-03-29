@@ -15,7 +15,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Logic", "Horscht.Lo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Contracts", "Horscht.Contracts\Horscht.Contracts.csproj", "{EC76B083-819B-4C24-B11C-639EC66600ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horscht.Importer", "Horscht.Importer\Horscht.Importer.csproj", "{ED9CA4DF-70BE-4C62-B550-0174057AA717}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Horscht.Importer", "Horscht.Importer\Horscht.Importer.csproj", "{ED9CA4DF-70BE-4C62-B550-0174057AA717}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE5C9EA8-92E4-4718-8C9A-E35E0E46ACEF}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
