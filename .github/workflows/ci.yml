@@ -28,6 +28,4 @@ jobs:
         tags: |
           type=ref,event=branch
           type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=raw,${{ env.IMAGE_TAG }}
+          type=raw,value={{branch}}-{{date 'YYYYMMDD-HHmmss'}}
