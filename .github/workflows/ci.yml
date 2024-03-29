@@ -19,3 +19,15 @@ jobs:
 
     - name: Build the Web image
       run: docker build . --file ./Horscht.Web/Dockerfile --tag horscht-web:${{ env.IMAGE_TAG }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: metaWeb
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: ${{ env.REGISTRY }}/thomasneuberger/horscht-web
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=raw,${{ env.IMAGE_TAG }}
