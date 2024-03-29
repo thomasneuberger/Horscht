@@ -33,7 +33,7 @@ jobs:
       id: imageTag
       run: |
         branch=${{ github.ref_name }}
-        echo "tag=${branch//'/'/'-'}-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+        echo "tag=${branch//'/'/'-'}-${{ github.run_number }}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
 
     - name: Extract metadata (tags, labels) for Docker
       id: metaWeb
