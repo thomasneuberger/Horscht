@@ -14,8 +14,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Create image tag
+      id: imageTag
+      run: echo "::set-output name=tag::${{ github.ref }}-$(date +'%Y%m%d-%H%M%S')"
+
     - name: Report image tag
-      run: echo ${{ env.IMAGE_TAG }}
+      run: echo ${{ env.IMAGE_TAG }} / ${{ steps.imageTag.outputs.tag }}
 
     - name: Extract metadata (tags, labels) for Docker
       id: metaWeb
