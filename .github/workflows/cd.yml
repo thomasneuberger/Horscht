@@ -7,10 +7,11 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  IMAGE_TAG: $(date +%s)
 
 jobs:
 
-  build:
+  buildAndPush:
 
     runs-on: ubuntu-latest
 
@@ -28,11 +29,21 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Create image tag
+      id: imageTag
+      run: |
+        branch=${{ github.ref_name }}
+        echo "tag=${branch//'/'/'-'}-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+
     - name: Extract metadata (tags, labels) for Docker
       id: metaWeb
       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
       with:
         images: ${{ env.REGISTRY }}/thomasneuberger/horscht-web
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=raw,value=${{ steps.imageTag.outputs.tag }}
 
       # https://github.com/docker/build-push-action#inputs
     - name: Build and push Docker image
@@ -49,6 +60,10 @@ jobs:
       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
       with:
         images: ${{ env.REGISTRY }}/thomasneuberger/horscht-import
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=raw,value=${{ steps.imageTag.outputs.tag }}
 
       # https://github.com/docker/build-push-action#inputs
     - name: Build and push Docker image
