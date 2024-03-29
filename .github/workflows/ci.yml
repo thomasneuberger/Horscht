@@ -3,7 +3,7 @@ name: CI
 on: [ push, pull_request, workflow_dispatch ]
 
 env:
-  IMAGE_TAG: $(date +%s)
+  IMAGE_TAG: "{{date 'YYYYMMDD-HHmmss'}}"
 
 jobs:
 
@@ -13,6 +13,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Report image tag
+      run: echo ${{ env.IMAGE_TAG }}
 
     - name: Build the Importer image
       run: docker build . --file ./Horscht.Importer/Dockerfile --tag horscht-importer:${{ env.IMAGE_TAG }}
