@@ -16,10 +16,10 @@ jobs:
 
     - name: Create image tag
       id: imageTag
-      run: echo "tag=${{ github.ref-name }}-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
+      run: echo "tag=${${{ github.ref_name }}//'/'/'-'}-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_OUTPUT
 
     - name: Report image tag
-      run: echo ${{ env.IMAGE_TAG }} / ${{ github.ref_name }} / ${{ github.refname }} / ${{ steps.imageTag.outputs.tag }}
+      run: echo ${{ env.IMAGE_TAG }} / ${{ github.ref }} / ${${{ github.ref_name }}//'/'/'-'} / ${{ github.ref_name }}
 
     - name: Extract metadata (tags, labels) for Docker
       id: metaWeb
