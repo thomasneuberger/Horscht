@@ -52,8 +52,6 @@ public class Program
             app.ProvideSwagger(builder.Configuration);
         }
 
-        app.UseHttpsRedirection();
-
         app.UseAuthentication();
         app.UseAuthorization();
 
