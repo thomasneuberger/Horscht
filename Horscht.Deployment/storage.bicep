@@ -1,10 +1,9 @@
 param environment string
 param location string = resourceGroup().location
-param shortLocation string
 param adminUsers string[]
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
-  name: 'sthorscht${shortLocation}${environment}'
+  name: 'sthorscht${environment}'
   location: location
   kind: 'StorageV2'
   sku: {
@@ -139,3 +138,8 @@ resource adminTablePermissions 'Microsoft.Authorization/roleAssignments@2020-10-
     principalType: 'User'
   }
 }]
+
+var accountKey = storageAccount.listKeys(storageAccount.apiVersion).keys[0].value
+output connectionString string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${accountKey};EndpointSuffix=${az.environment().suffixes.storage}'
+
+output importQueueName string = 'https://${storageAccount.name}.queue.${az.environment().suffixes.storage}/${importQueue.name}'
