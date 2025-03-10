@@ -8,10 +8,13 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.10.0" />
+    <PackageReference Include="Azure.Identity" Version="1.13.2" />
     <PackageReference Include="Microsoft.Graph" Version="5.72.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" />
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="8.0.13" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.67.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Horscht.App\Horscht.App.csproj" />
