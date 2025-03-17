@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Data.Tables" Version="12.10.0" />
     <PackageReference Include="Azure.Identity" Version="1.13.2" />
-    <PackageReference Include="Microsoft.Graph" Version="5.72.0" />
+    <PackageReference Include="Microsoft.Graph" Version="5.73.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.3" />
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="8.0.13" />
