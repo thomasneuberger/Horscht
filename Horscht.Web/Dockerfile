@@ -4,6 +4,7 @@ WORKDIR /Horscht
 
 # We copy the .csproj of our app to root and
 # restore the dependencies of the project.
+COPY ["Directory.Packages.props", "."]
 COPY ["Horscht.Web/Horscht.Web.csproj", "Horscht.Web/"]
 COPY ["Horscht.Logic/Horscht.Logic.csproj", "Horscht.Logic/"]
 COPY ["Horscht.App/Horscht.App.csproj", "Horscht.App/"]
