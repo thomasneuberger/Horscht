@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Azure.Data.Tables" Version="12.10.0" />
+    <PackageVersion Include="Azure.Identity" Version="1.13.2" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.24.0" />
+    <PackageVersion Include="Azure.Storage.Queues" Version="12.22.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.15" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.15"/>
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.70.2" />
+    <PackageVersion Include="Microsoft.Identity.Web" Version="3.8.3" />
+    <PackageVersion Include="Microsoft.Identity.Web.DownstreamApi" Version="3.8.3" />
+    <PackageVersion Include="Microsoft.Identity.Web.UI" Version="3.8.3" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.15" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="8.0.15" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.4" />
+    <PackageVersion Include="z440.atl.core" Version="6.20.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.15" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Graph" Version="5.76.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.15" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.15" />
+    <PackageVersion Include="Microsoft.Authentication.WebAssembly.Msal" Version="8.0.15" />
+  </ItemGroup>
+</Project>
