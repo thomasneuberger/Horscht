@@ -9,6 +9,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Directory.Packages.props", "."]
 COPY ["Horscht.Importer/Horscht.Importer.csproj", "Horscht.Importer/"]
 COPY ["Horscht.Contracts/Horscht.Contracts.csproj", "Horscht.Contracts/"]
 COPY ["Horscht.Logic/Horscht.Logic.csproj", "Horscht.Logic/"]
