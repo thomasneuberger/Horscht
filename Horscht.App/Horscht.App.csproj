@@ -22,7 +22,7 @@
     <ProjectReference Include="..\Horscht.Logic\Horscht.Logic.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" VersionOverride="8.0.19" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
     <Content Update="Shared\LoginDisplay.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
