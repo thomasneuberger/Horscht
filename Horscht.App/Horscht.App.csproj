@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Horscht.Logic\Horscht.Logic.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Storage.Queues" VersionOverride="12.24.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" VersionOverride="9.0.9" />
     <Content Update="Shared\LoginDisplay.razor">
