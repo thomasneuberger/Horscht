@@ -25,7 +25,7 @@
     <PackageReference Include="Azure.Storage.Queues" VersionOverride="12.24.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
   <PackageReference Include="Microsoft.Extensions.Options" VersionOverride="9.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" VersionOverride="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <Content Update="Shared\LoginDisplay.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
