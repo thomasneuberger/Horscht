@@ -26,7 +26,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Graph" Version="5.98.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.22" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Authentication.WebAssembly.Msal" Version="8.0.22" />
   </ItemGroup>
 </Project>
