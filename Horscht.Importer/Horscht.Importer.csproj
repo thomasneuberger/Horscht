@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     <ProjectReference Include="..\Horscht.Contracts\Horscht.Contracts.csproj" />
     <ProjectReference Include="..\Horscht.Logic\Horscht.Logic.csproj" />
   </ItemGroup>
