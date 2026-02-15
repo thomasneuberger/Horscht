@@ -17,6 +17,11 @@ public class Program
         // Add service defaults & Aspire client integrations.
         builder.AddServiceDefaults();
 
+        // Add Aspire Azure Storage clients
+        builder.AddAzureBlobServiceClient("blobs");
+        builder.AddAzureQueueServiceClient("queues");
+        builder.AddAzureTableServiceClient("tables");
+
         // Add services to the container.
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
