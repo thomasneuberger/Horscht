@@ -11,6 +11,7 @@ param registryUsername string
 param registryPassword string
 param imageTag string
 param importerHostname string
+param apiHostname string
 
 param authClientId string
 @secure()
@@ -59,7 +60,33 @@ module Importer 'importer.bicep' = {
 	}
 }
 
+module Api 'api.bicep' = {
+	scope: rg
+	name: 'Api'
+	params: {
+		environment: environment
+		location: location
+		aspNetEnvironment: aspNetEnvironment
+
+		containerEnvironmentId: containerEnvironmentId
+		containerEnvironmentResourceGroupName: containerEnvironmentResourceGroupName
+		containerEnvironmentName: containerEnvironmentName
+		imageTag: imageTag
+		registryUsername: registryUsername
+		registryPassword: registryPassword
+		hostname: apiHostname
+
+		storageconnectionString: Storage.outputs.connectionString
+
+		authClientId: authClientId
+		authClientSecret: authClientSecret
+	}
+}
+
 output resourceGroupName string = rg.name
 output importerAppName string = Importer.outputs.appName
 output importerHostname string = importerHostname
 output importerCertificateId string = Importer.outputs.certificateId
+output apiAppName string = Api.outputs.appName
+output apiHostname string = apiHostname
+output apiCertificateId string = Api.outputs.certificateId

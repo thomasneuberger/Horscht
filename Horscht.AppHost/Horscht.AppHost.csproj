@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Horscht.Api\Horscht.Api.csproj" />
     <ProjectReference Include="..\Horscht.Importer\Horscht.Importer.csproj" />
     <ProjectReference Include="..\Horscht.ServiceDefaults\Horscht.ServiceDefaults.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="..\Horscht.Web\Horscht.Web.csproj" />

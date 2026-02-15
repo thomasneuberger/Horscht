@@ -1,7 +1,7 @@
-﻿using Microsoft.OpenApi;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Horscht.Importer;
+namespace Horscht.Api;
 
 public static class SwaggerExtensions
 {
