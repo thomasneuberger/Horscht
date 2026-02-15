@@ -30,6 +30,7 @@ public class Program
 
         builder.Services.AddSingleton<IStorageClientProvider, StorageClientProvider>();
 
+        builder.Services.AddHostedService<StorageInitializer>();
         builder.Services.AddHostedService<FileImport>();
 
         builder.Services.AddOptions<ImporterStorageOptions>()

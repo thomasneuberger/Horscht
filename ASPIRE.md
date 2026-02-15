@@ -19,9 +19,14 @@ The Horscht application now includes .NET Aspire for local development orchestra
 
 The AppHost is the orchestration entry point for the application. It defines:
 
-- **Azure Storage Emulator (Azurite)** - Docker container providing local Blob, Queue, and Table storage
+- **Azure Storage Emulator (Azurite)** - Docker container providing local Blob, Queue, and Table storage with persistent data
 - **Horscht.Importer** - The background import service
 - **Horscht.Web** - The Blazor WebAssembly frontend
+
+**Key Features:**
+- Data persistence: Azurite data is stored in a Docker volume and persists between runs
+- CORS enabled: Allows browser-based access from Blazor WebAssembly
+- Automatic initialization: Required queues (`import`) and tables (`songs`) are created automatically on startup
 
 ### Horscht.ServiceDefaults
 
@@ -66,6 +71,13 @@ The Importer service now uses Aspire Azure Storage client integration:
 - `TableServiceClient` - Injected via DI, configured to connect to Azurite
 
 The `StorageClientProvider` has been updated to use these injected clients instead of creating clients from connection strings.
+
+**Storage Initialization:**
+On startup, the Importer service automatically creates the required storage resources:
+- Queue: `import` - For processing uploaded music files
+- Table: `songs` - For storing song metadata
+
+This ensures the storage structure matches the Azure deployment and allows the application to work immediately after starting.
 
 ### Horscht.Web
 

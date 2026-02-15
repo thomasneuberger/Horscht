@@ -2,12 +2,14 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 // Add Azurite for local Azure Storage emulation (Blobs, Queues, and Tables)
 // Configure CORS to allow Blazor WebAssembly browser access
+// Persist data between runs using a volume
 var storage = builder.AddAzureStorage("storage")
     .RunAsEmulator(emulator =>
     {
         emulator.WithBlobPort(10000)
                 .WithQueuePort(10001)
                 .WithTablePort(10002)
+                .WithDataVolume("horscht-data")
                 .WithArgs(
                     "--blobCors", "*",
                     "--queueCors", "*", 
