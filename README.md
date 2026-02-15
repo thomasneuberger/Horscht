@@ -1,6 +1,6 @@
 # Horscht
 
-A music catalog application built with .NET 8 and Blazor WebAssembly that allows users to upload, organize, and browse their music collection with automatic metadata extraction.
+A music catalog application built with .NET 10 and Blazor WebAssembly that allows users to upload, organize, and browse their music collection with automatic metadata extraction.
 
 ## Overview
 
@@ -23,7 +23,7 @@ The application follows a clean layered architecture:
 
 ## Technology Stack
 
-- **.NET 8** - Modern .NET framework
+- **.NET 10** - Modern .NET framework
 - **Blazor WebAssembly** - Client-side web framework
 - **Azure Storage** - Blob storage for files, Table storage for catalog, Queue storage for messaging
 - **Azure AD** - Authentication and authorization
@@ -34,7 +34,7 @@ The application follows a clean layered architecture:
 
 ### Prerequisites
 
-- .NET 8 SDK
+- .NET 10 SDK
 - Azure subscription (for cloud services)
 - Visual Studio 2022 or VS Code
 

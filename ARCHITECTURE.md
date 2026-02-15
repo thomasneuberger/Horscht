@@ -2,7 +2,7 @@
 
 ## Overview
 
-Horscht is a music catalog application built with .NET 8 and Blazor WebAssembly. The application allows users to upload, import, store, and browse music files with metadata extraction. The system uses Azure cloud services for storage, queuing, and data management.
+Horscht is a music catalog application built with .NET 10 and Blazor WebAssembly. The application allows users to upload, import, store, and browse music files with metadata extraction. The system uses Azure cloud services for storage, queuing, and data management.
 
 ## Purpose
 
@@ -127,7 +127,7 @@ Horscht.Deployment (infrastructure as code)
 ## Technology Stack
 
 ### Core Technologies
-- **.NET 8**: Target framework
+- **.NET 10**: Target framework
 - **C# 12**: Programming language with latest features
 - **Blazor WebAssembly**: Client-side web framework
 - **ASP.NET Core**: Backend services
@@ -192,7 +192,7 @@ The project uses a comprehensive `.editorconfig` file that enforces:
 - **Final newline**: Not required
 
 #### Code Style
-- **var usage**: Explicit types required in this project (`string name` not `var name`). This is a project-specific convention enforced through .editorconfig that differs from general .NET guidelines which recommend `var` when type is apparent. This convention prioritizes explicit type visibility.
+- **var usage**: Use `var` when the type is obvious from the right side of the assignment, following .NET best practices. Use explicit types when it improves code clarity.
 - **Braces**: Always required for control structures
 - **Expression-bodied members**: 
   - Properties: Preferred (`public int Age => _age;`)
@@ -251,7 +251,7 @@ public string Name => _name;
 _token ??= await _authenticationService.GetAccessTokenAsync(...);
 
 // String interpolation
-string containerUri = $"{_storageOptions.Value.BlobUri.TrimEnd('/')}/{container}";
+var containerUri = $"{_storageOptions.Value.BlobUri.TrimEnd('/')}/{container}";
 ```
 
 ### Dependency Injection
@@ -447,7 +447,7 @@ public partial class Library
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        IReadOnlyList<Song> songs = await LibraryService.GetAllSongs();
+        var songs = await LibraryService.GetAllSongs();
         _songs.AddRange(songs);
         _loading = false;
     }
@@ -584,7 +584,6 @@ While the repository doesn't currently include automated tests, consider:
 ✅ Use extension methods for service registration
 
 ### DON'T
-❌ Use var for type declarations (project-specific convention that differs from general .NET guidelines)
 ❌ Block on async code (.Result, .Wait())
 ❌ Catch exceptions without logging
 ❌ Hardcode configuration values
@@ -603,7 +602,7 @@ While the repository doesn't currently include automated tests, consider:
 - Regular security updates applied
 
 ### Version Targeting
-- Target .NET 8 LTS
+- Target .NET 10 LTS
 - Update to newer .NET versions as they become LTS
 
 ## Summary
