@@ -1,3 +1,15 @@
+// Horscht.Api Container App Deployment
+// This API serves as the Backend for Frontend (BFF) for the Horscht web application.
+// 
+// IMPORTANT: This API requires its own Azure AD app registration separate from the Web app.
+// See AUTHENTICATION.md in the repository root for detailed setup instructions.
+//
+// Required Azure AD Setup:
+// 1. Create an app registration for Horscht.Api
+// 2. Expose an API with scope 'access_as_user'
+// 3. Configure the Web app registration to request this scope
+// 4. Use the API's client ID for the authClientId parameter below
+
 param environment string
 param location string = resourceGroup().location
 param aspNetEnvironment string

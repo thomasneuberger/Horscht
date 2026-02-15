@@ -16,10 +16,13 @@ Horscht is a cloud-native music cataloging system that enables users to:
 The application follows a clean layered architecture:
 
 - **Horscht.Web** - Blazor WebAssembly client application
+- **Horscht.Api** - REST API serving as Backend for Frontend (BFF)
 - **Horscht.App** - Reusable Razor components for UI
 - **Horscht.Logic** - Business logic and service implementations
 - **Horscht.Contracts** - Shared interfaces and DTOs
 - **Horscht.Importer** - Background service for processing uploaded files
+
+For authentication setup, see [AUTHENTICATION.md](AUTHENTICATION.md).
 
 ## Technology Stack
 
@@ -70,17 +73,19 @@ Horscht/
 ├── Horscht.AppHost/        # .NET Aspire orchestration (local dev)
 ├── Horscht.ServiceDefaults/ # Shared Aspire service configuration
 ├── Horscht.Web/           # Blazor WebAssembly host
+├── Horscht.Api/           # REST API (Backend for Frontend)
 ├── Horscht.App/           # Razor components library
 ├── Horscht.Logic/         # Business logic services
 ├── Horscht.Contracts/     # Shared interfaces and models
 ├── Horscht.Importer/      # Background processing service
-└── Horscht.Deployment/    # Infrastructure as Code (Bicep)
+└── deployment/            # Infrastructure as Code (Bicep)
 ```
 
 ## Documentation
 
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed architecture, coding standards, and development guidelines
 - **[ASPIRE.md](ASPIRE.md)** - .NET Aspire integration for local development
+- **[AUTHENTICATION.md](AUTHENTICATION.md)** - Azure AD setup and authentication flow between components
 
 ## License
 

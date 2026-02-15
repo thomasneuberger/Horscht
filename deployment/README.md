@@ -7,6 +7,7 @@ This folder contains the Infrastructure as Code (IaC) templates and scripts for 
 - **main.bicep** - Main deployment template that orchestrates all resources
 - **storage.bicep** - Azure Storage account configuration (Blob, Queue, Table)
 - **importer.bicep** - Container App deployment for the Importer service
+- **api.bicep** - Container App deployment for the API service (Backend for Frontend)
 - **builtInRoles.bicep** - Azure built-in role definitions
 - **managedCertificate.bicep** - Managed certificate configuration for custom domains
 - **Deploy-AzureResourceGroup.ps1** - PowerShell deployment script
@@ -21,10 +22,19 @@ The deployment creates the following resources:
 - **Table**: `songs` - For storing song metadata and catalog information
 - **CORS**: Configured for localhost development
 
-### Container App (Importer)
+### Container Apps
+
+#### Importer Service
 - Background service that processes uploaded files
 - Extracts metadata from audio files
 - Updates the song catalog
+- Scales based on queue depth (scale to zero when idle)
+
+#### API Service (Backend for Frontend)
+- REST API for the web application
+- Handles business logic and data access
+- Scales based on HTTP traffic (scale to zero when idle)
+- Requires separate Azure AD app registration (see [AUTHENTICATION.md](../AUTHENTICATION.md))
 
 ## Deployment
 
