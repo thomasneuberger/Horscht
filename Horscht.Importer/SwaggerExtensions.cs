@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Horscht.Importer;
 
@@ -13,23 +14,11 @@ public static class SwaggerExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
+            c.AddSecurityRequirement(document =>
+                new OpenApiSecurityRequirement
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "oauth2"
-                        },
-                        Scheme = "oauth2",
-                        Name = "oauth2",
-                        In = ParameterLocation.Header
-                    },
-                    new List<string>()
-                }
-            });
+                    [new OpenApiSecuritySchemeReference("oauth2", document)] = new List<string>()
+                });
 
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
