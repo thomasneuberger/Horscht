@@ -49,53 +49,62 @@ internal class StorageClientProvider : IStorageClientProvider
         }
     }
 
-    public async Task<BlobContainerClient> GetContainerClient(string container)
+    public Task<BlobContainerClient> GetContainerClient(string container)
     {
         // Use connection string if available (local development with Azurite)
         if (!string.IsNullOrWhiteSpace(_storageOptions.Value.ConnectionString))
         {
             var blobContainerClient = new BlobContainerClient(_storageOptions.Value.ConnectionString, container);
-            return await Task.FromResult(blobContainerClient);
+            return Task.FromResult(blobContainerClient);
         }
 
         // Use Azure AD authentication (production)
         var containerUri = $"{_storageOptions.Value.BlobUri.TrimEnd('/')}/{container}";
-        var credentials = await GetCredentials();
-        var authenticatedClient = new BlobContainerClient(new Uri(containerUri), credentials);
-
-        return authenticatedClient;
+        return GetCredentialsAndCreateBlobClient(containerUri);
     }
 
-    public async Task<QueueClient> GetQueueClient(string queue)
+    private async Task<BlobContainerClient> GetCredentialsAndCreateBlobClient(string containerUri)
+    {
+        var credentials = await GetCredentials();
+        return new BlobContainerClient(new Uri(containerUri), credentials);
+    }
+
+    public Task<QueueClient> GetQueueClient(string queue)
     {
         // Use connection string if available (local development with Azurite)
         if (!string.IsNullOrWhiteSpace(_storageOptions.Value.ConnectionString))
         {
             var queueClient = new QueueClient(_storageOptions.Value.ConnectionString, queue);
-            return await Task.FromResult(queueClient);
+            return Task.FromResult(queueClient);
         }
 
         // Use Azure AD authentication (production)
-        var queueUri = $"{_storageOptions.Value.QueueUri.TrimEnd('/')}/{_storageOptions.Value.ImportQueue}";
-        var credentials = await GetCredentials();
-        var authenticatedClient = new QueueClient(new Uri(queueUri), credentials);
-
-        return authenticatedClient;
+        var queueUri = $"{_storageOptions.Value.QueueUri.TrimEnd('/')}/{queue}";
+        return GetCredentialsAndCreateQueueClient(queueUri);
     }
 
-    public async Task<TableClient> GetTableClient(string table)
+    private async Task<QueueClient> GetCredentialsAndCreateQueueClient(string queueUri)
+    {
+        var credentials = await GetCredentials();
+        return new QueueClient(new Uri(queueUri), credentials);
+    }
+
+    public Task<TableClient> GetTableClient(string table)
     {
         // Use connection string if available (local development with Azurite)
         if (!string.IsNullOrWhiteSpace(_storageOptions.Value.ConnectionString))
         {
             var tableClient = new TableClient(_storageOptions.Value.ConnectionString, table);
-            return await Task.FromResult(tableClient);
+            return Task.FromResult(tableClient);
         }
 
         // Use Azure AD authentication (production)
-        var credentials = await GetCredentials();
-        var authenticatedClient = new TableClient(new Uri(_storageOptions.Value.TableUri), table, credentials);
+        return GetCredentialsAndCreateTableClient(table);
+    }
 
-        return authenticatedClient;
+    private async Task<TableClient> GetCredentialsAndCreateTableClient(string table)
+    {
+        var credentials = await GetCredentials();
+        return new TableClient(new Uri(_storageOptions.Value.TableUri), table, credentials);
     }
 }
