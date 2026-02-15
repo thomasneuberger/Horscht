@@ -14,6 +14,8 @@ public static class SwaggerExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
         {
+            // Swashbuckle 10.x uses a delegate pattern for AddSecurityRequirement
+            // The document parameter is used by OpenApiSecuritySchemeReference to properly link the requirement to the definition
             c.AddSecurityRequirement(document =>
                 new OpenApiSecurityRequirement
                 {
