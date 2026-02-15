@@ -92,22 +92,28 @@ The `StorageClientProvider` in Horscht.App automatically detects whether a conne
 
 ### CORS Configuration
 
-Since Blazor WebAssembly runs in the browser, it needs to make cross-origin requests to Azurite. The AppHost configures Azurite with CORS enabled for all origins during local development:
+Since Blazor WebAssembly runs in the browser, it needs to make cross-origin requests to Azurite. CORS is automatically configured on startup by the `StorageInitializer` service in the Importer:
 
 ```csharp
-.RunAsEmulator(emulator =>
+// Configure CORS for Blob and Queue services
+var blobServiceProperties = new BlobServiceProperties
 {
-    emulator.WithBlobPort(10000)
-            .WithQueuePort(10001)
-            .WithTablePort(10002)
-            .WithArgs(
-                "--blobCors", "*",
-                "--queueCors", "*", 
-                "--tableCors", "*");
-});
+    Cors = new List<BlobCorsRule>
+    {
+        new BlobCorsRule
+        {
+            AllowedOrigins = "*",
+            AllowedMethods = "GET,PUT,POST,DELETE,OPTIONS",
+            AllowedHeaders = "*",
+            ExposedHeaders = "*",
+            MaxAgeInSeconds = 3600
+        }
+    }
+};
+await _blobServiceClient.SetPropertiesAsync(blobServiceProperties);
 ```
 
-**Important**: The wildcard (`*`) CORS configuration is only safe for local development. Production Azure Storage should use specific allowed origins configured in the Azure Portal.
+**Important**: The wildcard (`*`) CORS configuration is only safe for local development with Azurite. Production Azure Storage should use specific allowed origins configured in the Azure Portal.
 
 ## Configuration
 
