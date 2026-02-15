@@ -78,6 +78,25 @@ The `StorageClientProvider` in Horscht.App automatically detects whether a conne
 - If `ConnectionString` is configured (local development), it uses connection string authentication
 - If not (production), it uses Azure AD token-based authentication
 
+### CORS Configuration
+
+Since Blazor WebAssembly runs in the browser, it needs to make cross-origin requests to Azurite. The AppHost configures Azurite with CORS enabled for all origins during local development:
+
+```csharp
+.RunAsEmulator(emulator =>
+{
+    emulator.WithBlobPort(10000)
+            .WithQueuePort(10001)
+            .WithTablePort(10002)
+            .WithArgs(
+                "--blobCors", "*",
+                "--queueCors", "*", 
+                "--tableCors", "*");
+});
+```
+
+**Important**: The wildcard (`*`) CORS configuration is only safe for local development. Production Azure Storage should use specific allowed origins configured in the Azure Portal.
+
 ## Configuration
 
 ### Local Development (Azurite)
@@ -135,6 +154,13 @@ For production deployments, you can switch from Azurite to real Azure Storage by
 - Check the Aspire Dashboard for service status
 - Verify that the Azurite container is running and healthy
 - Check service logs in the Aspire Dashboard
+
+### CORS errors when accessing storage from browser
+If you see errors like "No 'Access-Control-Allow-Origin' header is present":
+- Verify that Azurite is configured with CORS in `AppHost.cs` (see CORS Configuration section)
+- Check that the Azurite container started with the CORS arguments
+- Ensure you're accessing Azurite via the correct URLs (127.0.0.1 with ports 10000/10001/10002)
+- Clear browser cache and retry
 
 ### Aspire Dashboard not opening
 - Check that the dashboard ports (17145, 15182) are not in use
