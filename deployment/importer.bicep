@@ -19,7 +19,7 @@ param authClientId string
 @secure()
 param authClientSecret string
 
-var environmantVariables = [
+var environmentVariables = [
   {
     name: 'Storage__ConnectionString'
     secretRef: 'storage-connectionstring'
@@ -97,7 +97,7 @@ resource containerApp 'Microsoft.App/containerApps@2023-11-02-preview' = {
             cpu: json('0.5')
             memory: '1Gi'
           }
-          env: environmantVariables
+          env: environmentVariables
           probes: [
             {
               type: 'Liveness'
