@@ -25,6 +25,7 @@ The application follows a clean layered architecture:
 
 - **.NET 10** - Modern .NET framework
 - **Blazor WebAssembly** - Client-side web framework
+- **.NET Aspire** - Local development orchestration (see [ASPIRE.md](ASPIRE.md))
 - **Azure Storage** - Blob storage for files, Table storage for catalog, Queue storage for messaging
 - **Azure AD** - Authentication and authorization
 - **Azure Container Apps** - Cloud hosting for background services
@@ -35,8 +36,19 @@ The application follows a clean layered architecture:
 ### Prerequisites
 
 - .NET 10 SDK
-- Azure subscription (for cloud services)
-- Visual Studio 2022 or VS Code
+- Azure subscription (for cloud deployment)
+- Visual Studio 2022 (with .NET Aspire workload) or VS Code
+- Docker Desktop (for local development with Aspire)
+
+### Local Development with Aspire
+
+For local development, the application uses .NET Aspire to run all services together with Azurite (Azure Storage emulator):
+
+1. Ensure Docker Desktop is running
+2. Set `Horscht.AppHost` as the startup project in Visual Studio
+3. Press F5 to run
+
+See [ASPIRE.md](ASPIRE.md) for detailed instructions on using Aspire for local development.
 
 ### Configuration
 
@@ -55,6 +67,8 @@ The application requires Azure services to be configured. See the [ARCHITECTURE.
 
 ```
 Horscht/
+├── Horscht.AppHost/        # .NET Aspire orchestration (local dev)
+├── Horscht.ServiceDefaults/ # Shared Aspire service configuration
 ├── Horscht.Web/           # Blazor WebAssembly host
 ├── Horscht.App/           # Razor components library
 ├── Horscht.Logic/         # Business logic services
@@ -65,7 +79,8 @@ Horscht/
 
 ## Documentation
 
-For detailed information about the architecture, coding standards, and development guidelines, see [ARCHITECTURE.md](ARCHITECTURE.md).
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed architecture, coding standards, and development guidelines
+- **[ASPIRE.md](ASPIRE.md)** - .NET Aspire integration for local development
 
 ## License
 
