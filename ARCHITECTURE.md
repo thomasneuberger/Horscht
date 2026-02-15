@@ -454,6 +454,8 @@ public partial class Library
 }
 ```
 
+**Note**: While this pattern works, consider using immutable collections or reassigning the entire list for better change detection in complex scenarios.
+
 #### State Management
 - Use `StateHasChanged()` to trigger UI updates after async operations
 - Track loading states with boolean flags
@@ -482,14 +484,23 @@ internal class FileImport : IObservableHostedService, IDisposable
     }
 
     // Async void is acceptable here for fire-and-forget background processing
+    // IMPORTANT: Must include try-catch to handle exceptions (no caller to propagate to)
     private async void ListenToQueueMessagesAsync()
     {
-        while (!_cancellationTokenSource.IsCancellationRequested)
+        try
         {
-            QueueMessage response = await _queueClient.ReceiveMessageAsync(...);
-            // Process message
-            await Task.Delay(5000); // Polling interval
+            while (!_cancellationTokenSource.IsCancellationRequested)
+            {
+                QueueMessage response = await _queueClient.ReceiveMessageAsync(...);
+                // Process message
+                await Task.Delay(5000); // Polling interval
+            }
         }
+        catch (TaskCanceledException)
+        {
+            // Expected when cancellation is requested
+        }
+        // Add additional catch blocks for other expected exceptions
     }
 }
 ```
