@@ -67,10 +67,13 @@ To support Swagger UI OAuth authentication in development, you need to configure
 
 #### Create a Client Secret
 
+#### Create a Client Secret
+
 Client secrets are required for the API to authenticate with Azure AD. The primary use cases are:
-- **Swagger UI**: Enables OAuth 2.0 authentication in the interactive API documentation (Development mode)
 - **Service-to-service authentication**: Allows the API to authenticate itself when calling other Azure services
-- **Token exchange**: Used in authorization code flow to exchange authorization codes for access tokens
+- **Server-side OAuth flows**: Used in confidential client scenarios (not needed for Swagger UI with PKCE)
+
+**Note for Swagger UI**: When using the SPA platform with PKCE (our current setup), Swagger UI does NOT use the client secret. PKCE provides security without requiring a secret, which is appropriate for browser-based applications.
 
 1. In the app registration, go to **Certificates & secrets**
 2. Click **New client secret**
@@ -82,8 +85,6 @@ Client secrets are required for the API to authenticate with Azure AD. The prima
    - Store it securely (e.g., in Azure Key Vault for production, or User Secrets for local development)
    - Never commit this value to source control
 6. Note the **Secret ID** for reference (this is not the secret itself, just an identifier)
-
-💡 **Tip**: The client secret enables the "Authorize" button in Swagger UI to work. Without it, you won't be able to authenticate and test secured endpoints interactively. See the "Testing with Swagger UI" section for details.
 
 ⚠️ **Security Warning**: Client secrets are sensitive credentials. If a secret is compromised:
 - Immediately delete it from the Azure Portal (Certificates & secrets → Delete)
@@ -360,13 +361,15 @@ Before using Swagger UI authentication, ensure your Azure AD app registration is
    - Supports PKCE (Proof Key for Code Exchange) for secure authentication
    - No need to enable "Allow public client flows" when using SPA platform
 
-3. **Client secret configured**: 
-   - Stored in User Secrets for local development
-   - See "Setting up User Secrets" section above
+3. **Client secret**: NOT required for Swagger UI
+   - Swagger uses PKCE instead of client secrets (more secure for browser-based apps)
+   - Client secrets can be used for other purposes (service-to-service auth)
+   - But they are not needed for Swagger authentication
 
 If these are not configured, you'll see errors like:
 - "No reply address is registered for the application"
 - "Cross-origin token redemption is permitted only for the 'Single-Page Application' client-type"
+- "Client is public so neither 'client_assertion' nor 'client_secret' should be presented"
 
 ### How Client Secret Enables Swagger Authentication
 
@@ -412,14 +415,14 @@ When you click "Authorize" in Swagger:
 
 1. Swagger generates a PKCE code verifier and challenge (random strings for security)
 2. Swagger initiates an OAuth2 authorization code flow with PKCE to Azure AD
-3. It includes the `ClientId` and PKCE code challenge in the authorization request
+3. It includes the `ClientId` and PKCE code challenge in the authorization request (NO client secret)
 4. Azure AD authenticates you and asks for consent (if needed)
 5. Azure AD returns an authorization code
-6. Swagger exchanges the code for an access token using the `ClientSecret` and PKCE code verifier
+6. Swagger exchanges the code for an access token using ONLY the PKCE code verifier
 7. The PKCE verification ensures the token exchange is from the same client that initiated the flow
 8. The access token is stored and used for all subsequent API requests
 
-**About PKCE**: Proof Key for Code Exchange is a security extension that prevents authorization code interception attacks. It's the recommended approach for all OAuth flows in browser-based applications.
+**About PKCE**: Proof Key for Code Exchange is a security extension that prevents authorization code interception attacks. It's the recommended approach for all OAuth flows in browser-based applications. With PKCE, no client secret is needed - the dynamic code verifier/challenge pair provides the security.
 
 ### Troubleshooting Swagger Authentication
 
@@ -432,6 +435,13 @@ When you click "Authorize" in Swagger:
   4. Replace `{port}` with your actual port (e.g., 7100 for API, 7140 for Importer)
   5. You can add multiple redirect URIs for different ports
 - See the "Configure Authentication" section in the app registration setup above
+
+**"Client is public so neither 'client_assertion' nor 'client_secret' should be presented" error:**
+- The app registration is configured as SPA (public client), but the code is still sending a client secret
+- Public clients (like SPAs) cannot use client secrets - they use PKCE for security instead
+- Solution: Ensure you're using the latest code which does NOT send client secret for Swagger
+- The fix: Remove `options.OAuthClientSecret(clientSecret)` from SwaggerExtensions.cs
+- This is already fixed in the latest version - with PKCE, no client secret is needed or allowed
 
 **"Cross-origin token redemption is permitted only for the 'Single-Page Application' client-type" error:**
 - The app registration is not configured as a Single-Page Application (SPA)
@@ -459,11 +469,6 @@ When you click "Authorize" in Swagger:
 - Ensure you're running in Development mode (Swagger is only enabled in Development)
 - Check that your redirect URI is configured in the app registration
 - For Swagger, the redirect URI should be: `https://localhost:{port}/swagger/oauth2-redirect.html`
-
-**"Invalid client secret" errors:**
-- Verify the client secret in User Secrets matches the one in Azure Portal
-- Check if the secret has expired (go to Certificates & secrets in Azure Portal)
-- Ensure you copied the secret **value** (not the Secret ID)
 
 **"Unauthorized" (401) responses even after authorizing:**
 - Verify the API's client ID in configuration matches the app registration

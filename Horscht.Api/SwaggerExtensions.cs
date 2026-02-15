@@ -50,7 +50,6 @@ public static class SwaggerExtensions
     public static IApplicationBuilder ProvideSwagger(this IApplicationBuilder app, IConfiguration configuration)
     {
         var clientId = configuration["AzureAd:ClientId"];
-        var clientSecret = configuration["AzureAd:ClientSecret"];
         var scope = $"api://{clientId}/access_as_user";
 
         app.UseSwagger();
@@ -58,7 +57,8 @@ public static class SwaggerExtensions
         {
             options.OAuthAppName("Swagger");
             options.OAuthClientId(clientId);
-            options.OAuthClientSecret(clientSecret);
+            // Note: OAuthClientSecret is NOT used for public clients (SPA platform with PKCE)
+            // Public clients cannot securely store secrets, PKCE provides the security instead
             options.OAuthUseBasicAuthenticationWithAccessCodeGrant();
             // Enable PKCE (Proof Key for Code Exchange) for secure browser-based OAuth
             // This is required for SPAs and fixes "Cross-origin token redemption" error
