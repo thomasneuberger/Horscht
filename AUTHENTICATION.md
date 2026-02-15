@@ -51,6 +51,26 @@ The API needs its own app registration to validate tokens from the Web applicati
 2. Under **Implicit grant and hybrid flows**, ensure nothing is checked (API uses bearer tokens)
 3. Under **Allow public client flows**, set to **No**
 
+#### Create a Client Secret
+
+Client secrets are required for the API to authenticate with Azure AD when using Swagger UI or for other authentication scenarios.
+
+1. In the app registration, go to **Certificates & secrets**
+2. Click **New client secret**
+3. Configure:
+   - **Description**: Give it a meaningful name (e.g., "Development Secret" or "Production Secret")
+   - **Expires**: Choose an expiration period (recommended: 6 months or 1 year for production, 90 days for development)
+4. Click **Add**
+5. **IMPORTANT**: Copy the **Value** immediately - this is your client secret and it will only be shown once
+   - Store it securely (e.g., in Azure Key Vault for production, or User Secrets for local development)
+   - Never commit this value to source control
+6. Note the **Secret ID** for reference (this is not the secret itself, just an identifier)
+
+⚠️ **Security Warning**: Client secrets are sensitive credentials. If a secret is compromised:
+- Immediately delete it from the Azure Portal (Certificates & secrets → Delete)
+- Create a new secret
+- Update all applications using the old secret
+
 #### Optional: Add App Roles (for future authorization)
 
 1. Go to **App roles**
@@ -101,6 +121,34 @@ The Importer service has its own app registration (this may already exist).
 
 Follow similar steps as the API, but the Importer typically doesn't need to expose scopes unless other services need to call it.
 
+#### Create the App Registration (if needed)
+
+1. Go to [Azure Portal](https://portal.azure.com) → Azure Active Directory → App registrations
+2. Click **New registration**
+3. Configure:
+   - **Name**: `Horscht.Importer` (or `Horscht.Importer-dev`, `Horscht.Importer-prod`)
+   - **Supported account types**: Accounts in this organizational directory only (Single tenant)
+   - **Redirect URI**: Leave empty (background service doesn't need redirect URIs)
+4. Click **Register**
+5. Note the **Application (client) ID**
+
+#### Create a Client Secret
+
+The Importer service needs a client secret to authenticate with Azure AD.
+
+1. In the app registration, go to **Certificates & secrets**
+2. Click **New client secret**
+3. Configure:
+   - **Description**: Give it a meaningful name (e.g., "Importer Development Secret")
+   - **Expires**: Choose an expiration period (recommended: 6 months or 1 year for production)
+4. Click **Add**
+5. **IMPORTANT**: Copy the **Value** immediately and store it securely
+   - This value is shown only once
+   - For local development, use .NET User Secrets (see Local Development section below)
+   - For production, store in Azure Key Vault
+
+⚠️ **Note**: The Importer uses the client secret to authenticate as itself (client credentials flow) when accessing Azure resources.
+
 ## Configuration
 
 ### Horscht.Api Configuration
@@ -114,12 +162,42 @@ Update the `appsettings.json` and environment-specific settings:
     "Domain": "your-tenant.onmicrosoft.com",
     "TenantId": "your-tenant-id",
     "ClientId": "your-api-client-id",
+    "ClientSecret": "your-api-client-secret",
     "Scopes": "access_as_user"
   }
 }
 ```
 
-For production deployment via Bicep templates, these values are configured in the `deployment/main.bicep` parameters.
+**Where to get these values:**
+- `TenantId`: From Azure Portal → Azure Active Directory → Overview → Tenant ID
+- `ClientId`: From your API app registration → Overview → Application (client) ID
+- `ClientSecret`: From your API app registration → Certificates & secrets (created in the setup steps above)
+- `Domain`: Your Azure AD domain (usually `yourcompany.onmicrosoft.com`)
+
+⚠️ **Important**: Never commit the `ClientSecret` to source control. For local development, use .NET User Secrets (see Local Development section). For production deployment via Bicep templates, these values are configured in the `deployment/main.bicep` parameters.
+
+### Horscht.Importer Configuration
+
+Update the `appsettings.json` for the Importer service:
+
+```json
+{
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "your-tenant.onmicrosoft.com",
+    "TenantId": "your-tenant-id",
+    "ClientId": "your-importer-client-id",
+    "ClientSecret": "your-importer-client-secret",
+    "Scopes": "access_as_user"
+  }
+}
+```
+
+**Where to get these values:**
+- `TenantId`: From Azure Portal → Azure Active Directory → Overview → Tenant ID
+- `ClientId`: From your Importer app registration → Overview → Application (client) ID
+- `ClientSecret`: From your Importer app registration → Certificates & secrets (created in the setup steps above)
+- `Domain`: Your Azure AD domain
 
 ### Horscht.Web Configuration
 
@@ -196,26 +274,82 @@ private async Task CallApiAsync()
 
 For local development with .NET Aspire:
 
+### Setting up User Secrets
+
+To avoid committing sensitive information like client secrets to source control, use .NET User Secrets for local development:
+
+1. **For Horscht.Api**, navigate to the project directory and run:
+   ```bash
+   cd Horscht.Api
+   dotnet user-secrets init
+   dotnet user-secrets set "AzureAd:ClientSecret" "your-api-client-secret"
+   ```
+
+2. **For Horscht.Importer**, navigate to the project directory and run:
+   ```bash
+   cd Horscht.Importer
+   dotnet user-secrets init
+   dotnet user-secrets set "AzureAd:ClientSecret" "your-importer-client-secret"
+   ```
+
+These secrets are stored securely on your local machine and won't be committed to source control.
+
+### Configuration
+
 1. Create a development app registration for the API with redirect URI `https://localhost:5100` (or your local port)
-2. Update `Horscht.Api/appsettings.Development.json` with your development API client ID
-3. Update `Horscht.Web/wwwroot/appsettings.Development.json`:
+2. Create client secrets for both API and Importer app registrations (see sections above)
+3. Store the client secrets using User Secrets (see above)
+4. Update `Horscht.Api/appsettings.Development.json` with your development API client ID
+5. Update `Horscht.Importer/appsettings.Development.json` with your development Importer client ID
+6. Update `Horscht.Web/wwwroot/appsettings.Development.json`:
    - Set `AzureAd.ClientId` to your Web app's development client ID
    - Set `Api.BaseUrl` to `https://localhost:5100` (or the port where API runs locally)
    - Set `Api.Scopes` to your API's scope URI
 
-4. When running via AppHost, the services will discover each other automatically, but you still need valid Azure AD configuration for authentication to work.
+7. When running via AppHost, the services will discover each other automatically, but you still need valid Azure AD configuration for authentication to work.
 
 ## Production Deployment
 
 When deploying to Azure Container Apps:
 
-1. Use Azure Key Vault to store secrets:
-   - API Client Secret
-   - Any other sensitive configuration
+### Storing Secrets Securely
 
-2. Update Bicep templates (`deployment/main.bicep` and `deployment/api.bicep`) with your production app registration IDs
+1. **Create an Azure Key Vault** (if you don't have one):
+   ```bash
+   az keyvault create --name "kv-horscht-prod" --resource-group "rg-horscht-prod" --location "westeurope"
+   ```
 
-3. The Container App will use managed identity where possible, but the client ID and tenant ID are still needed for JWT validation
+2. **Store your client secrets in Key Vault**:
+   ```bash
+   # Store API client secret
+   az keyvault secret set --vault-name "kv-horscht-prod" --name "api-client-secret" --value "your-api-client-secret"
+   
+   # Store Importer client secret
+   az keyvault secret set --vault-name "kv-horscht-prod" --name "importer-client-secret" --value "your-importer-client-secret"
+   ```
+
+3. **Configure Bicep Templates**:
+   - Update `deployment/main.bicep` with your production app registration IDs
+   - Reference Key Vault secrets for the `authClientSecret` parameters
+   - The Container App will use managed identity where possible, but the client ID and tenant ID are still needed for JWT validation
+
+### Deployment Parameters
+
+When deploying, provide the following parameters:
+- `authClientId`: The application (client) ID from the app registration
+- `authClientSecret`: Retrieved from Key Vault (never hardcode this)
+- `tenantId`: Your Azure AD tenant ID
+
+Example deployment command:
+```bash
+az deployment sub create \
+  --location westeurope \
+  --template-file deployment/main.bicep \
+  --parameters \
+    authClientId="your-client-id" \
+    authClientSecret="@Microsoft.KeyVault(SecretUri=https://kv-horscht-prod.vault.azure.net/secrets/api-client-secret/)" \
+    tenantId="your-tenant-id"
+```
 
 ## Troubleshooting
 
