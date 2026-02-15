@@ -103,7 +103,7 @@ resource containerApp 'Microsoft.App/containerApps@2023-11-02-preview' = {
               initialDelaySeconds: 15
               httpGet: {
                 port: 8080
-                path: 'api/health'
+                path: '/api/health'
               }
             }
           ]
