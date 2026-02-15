@@ -192,7 +192,7 @@ The project uses a comprehensive `.editorconfig` file that enforces:
 - **Final newline**: Not required
 
 #### Code Style
-- **var usage**: Explicit types required in this project (`string name` not `var name`). Note: This is a project-specific convention that differs from general .NET guidelines which recommend `var` when type is apparent.
+- **var usage**: Explicit types required in this project (`string name` not `var name`). This is a project-specific convention enforced through .editorconfig that differs from general .NET guidelines which recommend `var` when type is apparent. This convention prioritizes explicit type visibility.
 - **Braces**: Always required for control structures
 - **Expression-bodied members**: 
   - Properties: Preferred (`public int Age => _age;`)
@@ -584,7 +584,7 @@ While the repository doesn't currently include automated tests, consider:
 ✅ Use extension methods for service registration
 
 ### DON'T
-❌ Use var for type declarations (project-specific convention)
+❌ Use var for type declarations (project-specific convention that differs from general .NET guidelines)
 ❌ Block on async code (.Result, .Wait())
 ❌ Catch exceptions without logging
 ❌ Hardcode configuration values
