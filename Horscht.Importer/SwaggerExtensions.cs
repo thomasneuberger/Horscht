@@ -9,6 +9,7 @@ public static class SwaggerExtensions
     {
         var tenantId = configuration["AzureAd:TenantId"];
         var clientId = configuration["AzureAd:ClientId"];
+        var scope = $"api://{clientId}/access_as_user";
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
@@ -16,10 +17,11 @@ public static class SwaggerExtensions
         {
             // Swashbuckle 10.x uses a delegate pattern for AddSecurityRequirement
             // The document parameter is used by OpenApiSecuritySchemeReference to properly link the requirement to the definition
+            // Include the scope in the list to preselect it in Swagger UI
             c.AddSecurityRequirement(document =>
                 new OpenApiSecurityRequirement
                 {
-                    [new OpenApiSecuritySchemeReference("oauth2", document)] = new List<string>()
+                    [new OpenApiSecuritySchemeReference("oauth2", document)] = new List<string> { scope }
                 });
 
             c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -27,13 +29,15 @@ public static class SwaggerExtensions
                 Type = SecuritySchemeType.OAuth2,
                 Flows = new OpenApiOAuthFlows
                 {
-                    Implicit = new OpenApiOAuthFlow
+                    // Use AuthorizationCode flow instead of deprecated Implicit flow
+                    // This fixes the "response_type 'token' is not enabled" error
+                    AuthorizationCode = new OpenApiOAuthFlow
                     {
                         AuthorizationUrl = new Uri($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize"),
                         TokenUrl = new Uri($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token"),
                         Scopes = new Dictionary<string, string>
                         {
-                            { $"api://{clientId}/access_as_user", "Access the API" }
+                            { scope, "Access the API" }
                         }
                     }
                 }
@@ -47,6 +51,7 @@ public static class SwaggerExtensions
     {
         var clientId = configuration["AzureAd:ClientId"];
         var clientSecret = configuration["AzureAd:ClientSecret"];
+        var scope = $"api://{clientId}/access_as_user";
 
         app.UseSwagger();
         app.UseSwaggerUI(options =>
@@ -55,6 +60,8 @@ public static class SwaggerExtensions
             options.OAuthClientId(clientId);
             options.OAuthClientSecret(clientSecret);
             options.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+            // Preselect the scope so users don't have to manually check it
+            options.OAuthScopes(scope);
         });
 
         return app;
