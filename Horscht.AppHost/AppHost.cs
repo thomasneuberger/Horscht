@@ -21,11 +21,18 @@ var importer = builder.AddProject<Projects.Horscht_Importer>("importer")
     .WithReference(queues)
     .WithReference(tables);
 
+// Add Horscht.Api service (BFF for frontend)
+var api = builder.AddProject<Projects.Horscht_Api>("api")
+    .WithReference(blobs)
+    .WithReference(queues)
+    .WithReference(tables);
+
 // Add Horscht.Web Blazor WebAssembly application
 var web = builder.AddProject<Projects.Horscht_Web>("web")
     .WithReference(blobs)
     .WithReference(queues)
     .WithReference(tables)
+    .WithReference(api)
     .WithReference(importer);
 
 builder.Build().Run();
