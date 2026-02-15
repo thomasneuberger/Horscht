@@ -192,7 +192,7 @@ The project uses a comprehensive `.editorconfig` file that enforces:
 - **Final newline**: Not required
 
 #### Code Style
-- **var usage**: Explicit types preferred (`string name` not `var name`)
+- **var usage**: Explicit types required in this project (`string name` not `var name`). Note: This is a project-specific convention that differs from general .NET guidelines which recommend `var` when type is apparent.
 - **Braces**: Always required for control structures
 - **Expression-bodied members**: 
   - Properties: Preferred (`public int Age => _age;`)
@@ -251,7 +251,7 @@ public string Name => _name;
 _token ??= await _authenticationService.GetAccessTokenAsync(...);
 
 // String interpolation
-var containerUri = $"{_storageOptions.Value.BlobUri.TrimEnd('/')}/{container}";
+string containerUri = $"{_storageOptions.Value.BlobUri.TrimEnd('/')}/{container}";
 ```
 
 ### Dependency Injection
@@ -447,7 +447,7 @@ public partial class Library
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        var songs = await LibraryService.GetAllSongs();
+        IReadOnlyList<Song> songs = await LibraryService.GetAllSongs();
         _songs.AddRange(songs);
         _loading = false;
     }
@@ -473,17 +473,20 @@ public partial class Library
 ```csharp
 internal class FileImport : IObservableHostedService, IDisposable
 {
-    public async Task StartAsync(CancellationToken cancellationToken)
+    // StartAsync initiates background processing and returns immediately
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        ListenToQueueMessagesAsync();
+        ListenToQueueMessagesAsync(); // Fire-and-forget pattern for background work
+        _state = State.Started;
         return Task.CompletedTask;
     }
 
+    // Async void is acceptable here for fire-and-forget background processing
     private async void ListenToQueueMessagesAsync()
     {
         while (!_cancellationTokenSource.IsCancellationRequested)
         {
-            var response = await _queueClient.ReceiveMessageAsync(...);
+            QueueMessage response = await _queueClient.ReceiveMessageAsync(...);
             // Process message
             await Task.Delay(5000); // Polling interval
         }
@@ -570,7 +573,7 @@ While the repository doesn't currently include automated tests, consider:
 ✅ Use extension methods for service registration
 
 ### DON'T
-❌ Use var for type declarations
+❌ Use var for type declarations (project-specific convention)
 ❌ Block on async code (.Result, .Wait())
 ❌ Catch exceptions without logging
 ❌ Hardcode configuration values
