@@ -7,7 +7,7 @@ using Azure.Storage.Queues.Models;
 namespace Horscht.Importer.HostedServices;
 
 /// <summary>
-/// Initializes Azure Storage resources (queues and tables) on startup.
+/// Initializes Azure Storage resources (blobs, queues, and tables) on startup.
 /// This ensures that required storage structures exist before the application starts processing.
 /// Also configures CORS for Azurite to allow browser-based access.
 /// </summary>
@@ -63,7 +63,6 @@ internal class StorageInitializer : IHostedService
         try
         {
             // Configure CORS for Blob service
-            var blobProperties = await _blobServiceClient.GetPropertiesAsync(cancellationToken);
             var blobServiceProperties = new BlobServiceProperties
             {
                 Cors = new List<BlobCorsRule>
@@ -82,7 +81,6 @@ internal class StorageInitializer : IHostedService
             _logger.LogInformation("CORS configured for Blob service");
 
             // Configure CORS for Queue service
-            var queueProperties = await _queueServiceClient.GetPropertiesAsync(cancellationToken);
             var queueServiceProperties = new QueueServiceProperties
             {
                 Cors = new List<QueueCorsRule>
