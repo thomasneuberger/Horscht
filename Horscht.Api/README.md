@@ -38,6 +38,7 @@ This API provides endpoints for the Blazor WebAssembly frontend to interact with
     "Domain": "your-tenant.onmicrosoft.com",
     "TenantId": "your-tenant-id",
     "ClientId": "your-api-client-id",  // ← This must be the API's own Client ID
+    "ClientSecret": "your-api-client-secret",  // ← Required for Swagger authentication
     "Scopes": "access_as_user"
   },
   "Storage": {
@@ -49,6 +50,10 @@ This API provides endpoints for the Blazor WebAssembly frontend to interact with
   }
 }
 ```
+
+**Note**: The `ClientSecret` is required for Swagger UI authentication. For security, never commit this to source control:
+- **Local development**: Use .NET User Secrets (see [AUTHENTICATION.md](../AUTHENTICATION.md))
+- **Production**: Store in Azure Key Vault
 
 ## Running Locally
 
@@ -76,6 +81,14 @@ When running in Development mode, Swagger UI is automatically enabled at `/swagg
 - Interactive API documentation
 - Ability to test endpoints directly from the browser
 - OAuth 2.0 authentication for testing secured endpoints
+
+**To authenticate in Swagger UI:**
+1. Ensure you have configured the `AzureAd:ClientSecret` (see [AUTHENTICATION.md](../AUTHENTICATION.md))
+2. Click the "Authorize" button (lock icon) in Swagger UI
+3. Sign in with your Azure AD credentials
+4. Test secured endpoints with automatic token handling
+
+For detailed instructions on using Swagger authentication, see the **"Testing with Swagger UI"** section in [AUTHENTICATION.md](../AUTHENTICATION.md).
 
 ### Health Checks
 

@@ -53,7 +53,10 @@ The API needs its own app registration to validate tokens from the Web applicati
 
 #### Create a Client Secret
 
-Client secrets are required for the API to authenticate with Azure AD when using Swagger UI or for other authentication scenarios.
+Client secrets are required for the API to authenticate with Azure AD. The primary use cases are:
+- **Swagger UI**: Enables OAuth 2.0 authentication in the interactive API documentation (Development mode)
+- **Service-to-service authentication**: Allows the API to authenticate itself when calling other Azure services
+- **Token exchange**: Used in authorization code flow to exchange authorization codes for access tokens
 
 1. In the app registration, go to **Certificates & secrets**
 2. Click **New client secret**
@@ -65,6 +68,8 @@ Client secrets are required for the API to authenticate with Azure AD when using
    - Store it securely (e.g., in Azure Key Vault for production, or User Secrets for local development)
    - Never commit this value to source control
 6. Note the **Secret ID** for reference (this is not the secret itself, just an identifier)
+
+💡 **Tip**: The client secret enables the "Authorize" button in Swagger UI to work. Without it, you won't be able to authenticate and test secured endpoints interactively. See the "Testing with Swagger UI" section for details.
 
 ⚠️ **Security Warning**: Client secrets are sensitive credentials. If a secret is compromised:
 - Immediately delete it from the Azure Portal (Certificates & secrets → Delete)
@@ -307,6 +312,88 @@ These secrets are stored securely on your local machine and won't be committed t
    - Set `Api.Scopes` to your API's scope URI
 
 7. When running via AppHost, the services will discover each other automatically, but you still need valid Azure AD configuration for authentication to work.
+
+## Testing with Swagger UI
+
+The API and Importer services include Swagger UI for interactive API testing in Development mode. The client secret you configured enables OAuth 2.0 authentication in Swagger.
+
+### How Client Secret Enables Swagger Authentication
+
+When you configure the `AzureAd:ClientSecret` in your application settings (or User Secrets), the Swagger UI uses it to authenticate with Azure AD on your behalf. This allows you to:
+
+1. Authenticate with your Azure AD account through Swagger UI
+2. Obtain access tokens automatically
+3. Test secured API endpoints without manually managing tokens
+
+### Using Swagger UI with Authentication
+
+1. **Start the API** (in Development mode):
+   ```bash
+   cd Horscht.Api
+   dotnet run
+   ```
+
+2. **Open Swagger UI** in your browser:
+   - Navigate to `https://localhost:{port}/swagger` (e.g., `https://localhost:7100/swagger`)
+   - You'll see the Swagger UI interface with all available endpoints
+
+3. **Authenticate**:
+   - Click the **"Authorize"** button (lock icon) at the top right of the Swagger UI
+   - In the authorization dialog, you'll see the OAuth2 (oauth2) section
+   - The `client_id` is pre-filled from your configuration
+   - Click **"Authorize"** button
+   - You'll be redirected to the Microsoft login page
+   - Sign in with your Azure AD credentials
+   - After successful login, you'll be redirected back to Swagger UI
+   - You should see "Authorized" with your scopes listed
+
+4. **Test Endpoints**:
+   - Once authorized, all API requests from Swagger will include your access token
+   - Click on any endpoint to expand it
+   - Click **"Try it out"**
+   - Fill in any required parameters
+   - Click **"Execute"**
+   - The request will include the `Authorization: Bearer {token}` header automatically
+
+### What Happens Behind the Scenes
+
+When you click "Authorize" in Swagger:
+
+1. Swagger initiates an OAuth2 authorization code flow with Azure AD
+2. It uses the `ClientId` and `ClientSecret` from your configuration
+3. Azure AD authenticates you and asks for consent (if needed)
+4. Azure AD returns an authorization code
+5. Swagger exchanges the code for an access token using the client secret
+6. The access token is stored and used for all subsequent API requests
+
+### Troubleshooting Swagger Authentication
+
+**"Failed to fetch" or CORS errors:**
+- Ensure you're running in Development mode (Swagger is only enabled in Development)
+- Check that your redirect URI is configured in the app registration
+- For Swagger, the redirect URI should be: `https://localhost:{port}/swagger/oauth2-redirect.html`
+
+**"Invalid client secret" errors:**
+- Verify the client secret in User Secrets matches the one in Azure Portal
+- Check if the secret has expired (go to Certificates & secrets in Azure Portal)
+- Ensure you copied the secret **value** (not the Secret ID)
+
+**"Unauthorized" (401) responses even after authorizing:**
+- Verify the API's client ID in configuration matches the app registration
+- Check that the scope in SwaggerExtensions.cs matches the exposed API scope
+- Ensure the access token has the correct audience claim (should be your API's client ID)
+
+**Cannot sign in:**
+- Verify `TenantId` is correct in appsettings
+- Check that your user account exists in the Azure AD tenant
+- Ensure the app registration allows users from your tenant
+
+### Security Note
+
+The client secret used by Swagger is only for development and testing purposes. In production:
+- Swagger UI should be disabled (it's automatically disabled when not in Development mode)
+- Client secrets should be stored in Azure Key Vault
+- Consider using certificate-based authentication instead of secrets for production services
 
 ## Production Deployment
 
