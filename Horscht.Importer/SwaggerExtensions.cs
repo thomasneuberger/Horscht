@@ -60,6 +60,9 @@ public static class SwaggerExtensions
             options.OAuthClientId(clientId);
             options.OAuthClientSecret(clientSecret);
             options.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+            // Enable PKCE (Proof Key for Code Exchange) for secure browser-based OAuth
+            // This is required for SPAs and fixes "Cross-origin token redemption" error
+            options.OAuthUsePkce();
             // Preselect the scope so users don't have to manually check it
             options.OAuthScopes(scope);
         });
