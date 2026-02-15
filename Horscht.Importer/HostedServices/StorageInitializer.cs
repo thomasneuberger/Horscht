@@ -13,20 +13,28 @@ namespace Horscht.Importer.HostedServices;
 /// </summary>
 internal class StorageInitializer : IHostedService
 {
+    // Azurite development credentials (publicly documented, safe for local dev only)
+    private const string AzuriteAccountName = "devstoreaccount1";
+    private const string AzuriteAccountKey = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
+    private const string TableApiVersion = "2019-02-02";
+
     private readonly BlobServiceClient _blobServiceClient;
     private readonly QueueServiceClient _queueServiceClient;
     private readonly TableServiceClient _tableServiceClient;
     private readonly ILogger<StorageInitializer> _logger;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public StorageInitializer(
         BlobServiceClient blobServiceClient,
         QueueServiceClient queueServiceClient,
         TableServiceClient tableServiceClient,
+        IHttpClientFactory httpClientFactory,
         ILogger<StorageInitializer> logger)
     {
         _blobServiceClient = blobServiceClient;
         _queueServiceClient = queueServiceClient;
         _tableServiceClient = tableServiceClient;
+        _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
 
@@ -133,7 +141,7 @@ internal class StorageInitializer : IHostedService
             var tableServiceUri = _tableServiceClient.Uri;
             var requestUri = new Uri($"{tableServiceUri}?restype=service&comp=properties");
 
-            using var httpClient = new HttpClient();
+            using var httpClient = _httpClientFactory.CreateClient();
             using var content = new StringContent(servicePropertiesXml, System.Text.Encoding.UTF8, "application/xml");
             
             // Add required headers for Azurite
@@ -144,20 +152,33 @@ internal class StorageInitializer : IHostedService
                 Content = content
             };
 
-            // Add authentication header with the Azurite key
-            var accountName = "devstoreaccount1";
-            var accountKey = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
             var dateString = DateTime.UtcNow.ToString("R");
-            
             request.Headers.Add("x-ms-date", dateString);
-            request.Headers.Add("x-ms-version", "2019-02-02");
+            request.Headers.Add("x-ms-version", TableApiVersion);
             
-            // For Azurite, we can use a simpler SharedKey authorization
-            var stringToSign = $"PUT\n\n\n{servicePropertiesXml.Length}\n\napplication/xml\n\n\n\n\n\nx-ms-date:{dateString}\nx-ms-version:2019-02-02\n/{accountName}/?comp=properties\nrestype:service";
+            // Build canonical string for SharedKey authentication
+            var stringToSign = string.Join("\n", new[]
+            {
+                "PUT",
+                "",  // Content-Encoding
+                "",  // Content-Language
+                servicePropertiesXml.Length.ToString(),  // Content-Length
+                "",  // Content-MD5
+                "application/xml",  // Content-Type
+                "",  // Date
+                "",  // If-Modified-Since
+                "",  // If-Match
+                "",  // If-None-Match
+                "",  // If-Unmodified-Since
+                "",  // Range
+                $"x-ms-date:{dateString}",
+                $"x-ms-version:{TableApiVersion}",
+                $"/{AzuriteAccountName}/?comp=properties\nrestype:service"
+            });
             
-            using var hmac = new System.Security.Cryptography.HMACSHA256(Convert.FromBase64String(accountKey));
+            using var hmac = new System.Security.Cryptography.HMACSHA256(Convert.FromBase64String(AzuriteAccountKey));
             var signature = Convert.ToBase64String(hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(stringToSign)));
-            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("SharedKey", $"{accountName}:{signature}");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("SharedKey", $"{AzuriteAccountName}:{signature}");
 
             var response = await httpClient.SendAsync(request, cancellationToken);
             
