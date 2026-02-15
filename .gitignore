@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /Horscht.Deployment/Deploy-Development.ps1
 /.idea
+
+# Bicep compiled JSON artifacts
+deployment/*.json
