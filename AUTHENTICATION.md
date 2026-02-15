@@ -368,6 +368,15 @@ When you click "Authorize" in Swagger:
 
 ### Troubleshooting Swagger Authentication
 
+**"response_type 'token' is not enabled for the application" error:**
+- This error occurred with the old Implicit flow configuration (now fixed)
+- The application now uses Authorization Code flow which is the recommended OAuth2 flow
+- If you still see this error, ensure you're using the latest version of the code
+
+**Scope not preselected in authorization dialog:**
+- This has been fixed - the scope is now automatically preselected
+- If you still need to manually select it, ensure your configuration is up to date
+
 **"Failed to fetch" or CORS errors:**
 - Ensure you're running in Development mode (Swagger is only enabled in Development)
 - Check that your redirect URI is configured in the app registration
