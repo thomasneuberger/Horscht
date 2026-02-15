@@ -16,7 +16,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE5C9EA8-92E4-4718-8C9A-E35E0E46ACEF}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		ARCHITECTURE.md = ARCHITECTURE.md
+		ASPIRE.md = ASPIRE.md
+		AUTHENTICATION.md = AUTHENTICATION.md
 		Directory.Packages.props = Directory.Packages.props
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Horscht.ServiceDefaults", "Horscht.ServiceDefaults\Horscht.ServiceDefaults.csproj", "{C50CCC6C-2AB1-439E-9EDA-F19E37F30A23}"
