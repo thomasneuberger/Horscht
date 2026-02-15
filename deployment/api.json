@@ -1,0 +1,239 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.40.2.10011",
+      "templateHash": "12676693875269506738"
+    }
+  },
+  "parameters": {
+    "environment": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "aspNetEnvironment": {
+      "type": "string"
+    },
+    "containerEnvironmentId": {
+      "type": "string"
+    },
+    "containerEnvironmentResourceGroupName": {
+      "type": "string"
+    },
+    "containerEnvironmentName": {
+      "type": "string"
+    },
+    "registryUsername": {
+      "type": "string"
+    },
+    "registryPassword": {
+      "type": "securestring"
+    },
+    "imageTag": {
+      "type": "string"
+    },
+    "hostname": {
+      "type": "string"
+    },
+    "storageconnectionString": {
+      "type": "securestring"
+    },
+    "authClientId": {
+      "type": "string"
+    },
+    "authClientSecret": {
+      "type": "securestring"
+    }
+  },
+  "variables": {
+    "environmentVariables": [
+      {
+        "name": "Storage__ConnectionString",
+        "secretRef": "storage-connectionstring"
+      },
+      {
+        "name": "AzureAd__TenantId",
+        "value": "[tenant().tenantId]"
+      },
+      {
+        "name": "AzureAd__ClientId",
+        "value": "[parameters('authClientId')]"
+      },
+      {
+        "name": "AzureAd__ClientSecret",
+        "secretRef": "auth-client-secret"
+      },
+      {
+        "name": "ASPNETCORE_ENVIRONMENT",
+        "value": "[parameters('aspNetEnvironment')]"
+      }
+    ],
+    "providedSecrets": [
+      {
+        "name": "registry-password",
+        "value": "[parameters('registryPassword')]"
+      },
+      {
+        "name": "storage-connectionstring",
+        "value": "[parameters('storageconnectionString')]"
+      },
+      {
+        "name": "auth-client-secret",
+        "value": "[parameters('authClientSecret')]"
+      }
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2023-11-02-preview",
+      "name": "[format('aca-horscht-api-{0}', parameters('environment'))]",
+      "location": "[parameters('location')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "managedEnvironmentId": "[parameters('containerEnvironmentId')]",
+        "configuration": {
+          "activeRevisionsMode": "Single",
+          "ingress": {
+            "external": true,
+            "targetPort": 8080,
+            "transport": "auto",
+            "allowInsecure": false,
+            "customDomains": [
+              {
+                "name": "[parameters('hostname')]",
+                "bindingType": "Disabled"
+              }
+            ]
+          },
+          "registries": [
+            {
+              "server": "ghcr.io",
+              "username": "[parameters('registryUsername')]",
+              "passwordSecretRef": "registry-password"
+            }
+          ],
+          "secrets": "[variables('providedSecrets')]"
+        },
+        "template": {
+          "containers": [
+            {
+              "image": "[format('ghcr.io/thomasneuberger/horscht-api:{0}', parameters('imageTag'))]",
+              "name": "api",
+              "resources": {
+                "cpu": "[json('0.5')]",
+                "memory": "1Gi"
+              },
+              "env": "[variables('environmentVariables')]",
+              "probes": [
+                {
+                  "type": "Liveness",
+                  "initialDelaySeconds": 15,
+                  "httpGet": {
+                    "port": 8080,
+                    "path": "api/health"
+                  }
+                }
+              ]
+            }
+          ],
+          "scale": {
+            "minReplicas": 0,
+            "maxReplicas": 10,
+            "rules": [
+              {
+                "name": "http-rule",
+                "http": {
+                  "metadata": {
+                    "concurrentRequests": "100"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "ApiCertificate",
+      "resourceGroup": "[parameters('containerEnvironmentResourceGroupName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "containerEnvironmentName": {
+            "value": "[parameters('containerEnvironmentName')]"
+          },
+          "hostname": {
+            "value": "[parameters('hostname')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.40.2.10011",
+              "templateHash": "4961574043535731673"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "containerEnvironmentName": {
+              "type": "string"
+            },
+            "hostname": {
+              "type": "string"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/managedEnvironments/managedCertificates",
+              "apiVersion": "2023-11-02-preview",
+              "name": "[format('{0}/{1}', parameters('containerEnvironmentName'), replace(parameters('hostname'), '.', '-'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "subjectName": "[parameters('hostname')]",
+                "domainControlValidation": "TXT"
+              }
+            }
+          ],
+          "outputs": {
+            "id": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.App/managedEnvironments/managedCertificates', parameters('containerEnvironmentName'), replace(parameters('hostname'), '.', '-'))]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "appName": {
+      "type": "string",
+      "value": "[format('aca-horscht-api-{0}', parameters('environment'))]"
+    },
+    "certificateId": {
+      "type": "string",
+      "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('containerEnvironmentResourceGroupName')), 'Microsoft.Resources/deployments', 'ApiCertificate'), '2025-04-01').outputs.id.value]"
+    }
+  }
+}
