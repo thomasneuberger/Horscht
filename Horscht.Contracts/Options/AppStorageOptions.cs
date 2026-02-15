@@ -15,4 +15,10 @@ public class AppStorageOptions
     public required string TableUri { get; set; }
 
     public required string SongTable { get; set; }
+
+    /// <summary>
+    /// Optional connection string for local development with Azurite.
+    /// When set, storage clients will use connection string authentication instead of Azure AD.
+    /// </summary>
+    public string? ConnectionString { get; set; }
 }

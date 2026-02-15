@@ -69,11 +69,49 @@ The `StorageClientProvider` has been updated to use these injected clients inste
 
 ### Horscht.Web
 
-The Web project (Blazor WebAssembly) continues to use its existing authentication-based storage client provider since it runs in the browser and cannot use server-side Aspire integrations.
+The Web project (Blazor WebAssembly) has been updated to support both local development with Azurite and production deployment with Azure Storage:
+
+- **Local Development**: Uses `appsettings.Development.json` which includes the Azurite connection string for anonymous access to the local emulator
+- **Production**: Uses `appsettings.json` with Azure AD authentication for secure access to real Azure Storage
+
+The `StorageClientProvider` in Horscht.App automatically detects whether a connection string is available:
+- If `ConnectionString` is configured (local development), it uses connection string authentication
+- If not (production), it uses Azure AD token-based authentication
 
 ## Configuration
 
-Aspire automatically configures connection strings for Azure Storage services. The connection names defined in the AppHost (`blobs`, `queues`, `tables`) are automatically mapped to the client registrations in the services.
+### Local Development (Azurite)
+
+When running via Aspire, the Blazor WebAssembly app uses configuration from `wwwroot/appsettings.Development.json`:
+
+```json
+{
+  "Storage": {
+    "ConnectionString": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;..."
+  }
+}
+```
+
+This connection string is the well-known Azurite development storage account, which:
+- Only works locally against the Azurite emulator
+- Is publicly documented and safe for local development
+- Allows the browser-based app to connect without Azure AD authentication
+
+### Production Deployment
+
+Production uses `appsettings.json` without a connection string, triggering Azure AD authentication:
+
+```json
+{
+  "Storage": {
+    "BlobUri": "https://youraccountname.blob.core.windows.net/",
+    "TableUri": "https://youraccountname.table.core.windows.net/",
+    ...
+  }
+}
+```
+
+Aspire automatically configures connection strings for server-side services (Horscht.Importer). The connection names defined in the AppHost (`blobs`, `queues`, `tables`) are automatically mapped to the client registrations in the services.
 
 For production deployments, you can switch from Azurite to real Azure Storage by:
 1. Removing the `.RunAsEmulator()` configuration in AppHost
