@@ -14,6 +14,9 @@
     <PackageReference Include="Azure.Identity" />
     <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="Azure.Storage.Queues" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" />
+    <PackageReference Include="Aspire.Azure.Storage.Queues" />
+    <PackageReference Include="Aspire.Azure.Data.Tables" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.Identity.Client" />
@@ -28,6 +31,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     <ProjectReference Include="..\Horscht.Contracts\Horscht.Contracts.csproj" />
     <ProjectReference Include="..\Horscht.Logic\Horscht.Logic.csproj" />
+    <ProjectReference Include="..\Horscht.ServiceDefaults\Horscht.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>

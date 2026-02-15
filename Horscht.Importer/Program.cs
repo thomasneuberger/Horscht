@@ -14,6 +14,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // Add service defaults & Aspire client integrations.
+        builder.AddServiceDefaults();
+
+        // Add Aspire Azure Storage clients
+        builder.AddAzureBlobServiceClient("blobs");
+        builder.AddAzureQueueServiceClient("queues");
+        builder.AddAzureTableServiceClient("tables");
+
         // Add services to the container.
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
@@ -22,6 +30,7 @@ public class Program
 
         builder.Services.AddSingleton<IStorageClientProvider, StorageClientProvider>();
 
+        builder.Services.AddHostedService<StorageInitializer>();
         builder.Services.AddHostedService<FileImport>();
 
         builder.Services.AddOptions<ImporterStorageOptions>()
@@ -47,6 +56,8 @@ public class Program
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
+        app.MapDefaultEndpoints();
+
         if (app.Environment.IsDevelopment())
         {
             app.ProvideSwagger(builder.Configuration);

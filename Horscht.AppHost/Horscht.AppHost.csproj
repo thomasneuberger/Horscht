@@ -1,0 +1,21 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.1">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>f6a39c24-b77b-48f5-a3eb-779651039565</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Azure.Storage" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Horscht.Importer\Horscht.Importer.csproj" />
+    <ProjectReference Include="..\Horscht.ServiceDefaults\Horscht.ServiceDefaults.csproj" IsAspireProjectResource="false" />
+    <ProjectReference Include="..\Horscht.Web\Horscht.Web.csproj" />
+  </ItemGroup>
+
+</Project>
