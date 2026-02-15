@@ -47,9 +47,24 @@ The API needs its own app registration to validate tokens from the Web applicati
 
 #### Configure Authentication
 
+To support Swagger UI OAuth authentication in development, you need to configure the app registration:
+
 1. Go to **Authentication**
-2. Under **Implicit grant and hybrid flows**, ensure nothing is checked (API uses bearer tokens)
-3. Under **Allow public client flows**, set to **No**
+2. Click **Add a platform** → **Web**
+3. Add the Swagger redirect URI:
+   - For local development: `https://localhost:7100/swagger/oauth2-redirect.html` (adjust port to match your API's port)
+   - You may need to add multiple URIs for different ports (e.g., 5100, 7100, etc.)
+   - Click **Configure**
+4. Under **Implicit grant and hybrid flows**, ensure nothing is checked (API uses bearer tokens, not implicit flow)
+5. Under **Allow public client flows**, set to **Yes** for development
+   - This is required for Swagger UI to work with the Authorization Code flow
+   - ⚠️ For production app registrations, keep this set to **No** and disable Swagger UI
+
+**Why "Allow public client flows" is needed for Swagger:**
+- Swagger UI is a browser-based JavaScript application
+- When it uses Authorization Code flow, the token exchange happens from the browser (client-side)
+- Azure AD treats this as a "public client" scenario, requiring this setting to be enabled
+- This is safe for development because Swagger UI is only enabled in Development mode
 
 #### Create a Client Secret
 
@@ -133,9 +148,23 @@ Follow similar steps as the API, but the Importer typically doesn't need to expo
 3. Configure:
    - **Name**: `Horscht.Importer` (or `Horscht.Importer-dev`, `Horscht.Importer-prod`)
    - **Supported account types**: Accounts in this organizational directory only (Single tenant)
-   - **Redirect URI**: Leave empty (background service doesn't need redirect URIs)
+   - **Redirect URI**: Leave empty initially (will add Swagger redirect URI in next step)
 4. Click **Register**
 5. Note the **Application (client) ID**
+
+#### Configure Authentication (for Swagger UI support)
+
+To enable Swagger UI OAuth authentication for the Importer service in development:
+
+1. Go to **Authentication**
+2. Click **Add a platform** → **Web**
+3. Add the Swagger redirect URI:
+   - For local development: `https://localhost:7140/swagger/oauth2-redirect.html` (adjust port to match your Importer's port)
+   - Common ports: 5140, 7140
+   - Click **Configure**
+4. Under **Allow public client flows**, set to **Yes** for development
+   - This enables Swagger UI to authenticate with the Authorization Code flow
+   - ⚠️ For production, keep this **No** and disable Swagger UI
 
 #### Create a Client Secret
 
@@ -317,6 +346,29 @@ These secrets are stored securely on your local machine and won't be committed t
 
 The API and Importer services include Swagger UI for interactive API testing in Development mode. The client secret you configured enables OAuth 2.0 authentication in Swagger.
 
+### Prerequisites for Swagger Authentication
+
+Before using Swagger UI authentication, ensure your Azure AD app registration is configured correctly:
+
+✅ **Required Configuration:**
+1. **Redirect URI added**: `https://localhost:{port}/swagger/oauth2-redirect.html`
+   - For API: Usually port 7100 or 5100
+   - For Importer: Usually port 7140 or 5140
+   - Add this in: Azure Portal → App Registration → Authentication → Add platform (Web)
+
+2. **Allow public client flows**: Set to **Yes**
+   - Location: Azure Portal → App Registration → Authentication → Allow public client flows
+   - Required because Swagger UI is a browser-based JavaScript application
+   - Safe for development since Swagger is only enabled in Development mode
+
+3. **Client secret configured**: 
+   - Stored in User Secrets for local development
+   - See "Setting up User Secrets" section above
+
+If these are not configured, you'll see errors like:
+- "No reply address is registered for the application"
+- "Cross-origin token redemption is permitted only for the 'Single-Page Application' client-type"
+
 ### How Client Secret Enables Swagger Authentication
 
 When you configure the `AzureAd:ClientSecret` in your application settings (or User Secrets), the Swagger UI uses it to authenticate with Azure AD on your behalf. This allows you to:
@@ -367,6 +419,27 @@ When you click "Authorize" in Swagger:
 6. The access token is stored and used for all subsequent API requests
 
 ### Troubleshooting Swagger Authentication
+
+**"No reply address is registered for the application" error:**
+- The Swagger OAuth redirect URI is not configured in your Azure AD app registration
+- Solution:
+  1. Go to your app registration in Azure Portal → Authentication
+  2. Add platform: **Web**
+  3. Add redirect URI: `https://localhost:{port}/swagger/oauth2-redirect.html`
+  4. Replace `{port}` with your actual port (e.g., 7100 for API, 7140 for Importer)
+  5. You can add multiple redirect URIs for different ports
+- See the "Configure Authentication" section in the app registration setup above
+
+**"Cross-origin token redemption is permitted only for the 'Single-Page Application' client-type" error:**
+- The app registration doesn't allow public client flows (required for Swagger UI)
+- Solution:
+  1. Go to your app registration in Azure Portal → Authentication
+  2. Scroll down to **Allow public client flows**
+  3. Set to **Yes**
+  4. Click **Save**
+- Why this is needed: Swagger UI is a browser-based JavaScript app, so the OAuth flow happens client-side
+- Security: This is safe for development since Swagger UI is only enabled in Development mode
+- For production app registrations, keep this setting as **No**
 
 **"response_type 'token' is not enabled for the application" error:**
 - This error occurred with the old Implicit flow configuration (now fixed)
