@@ -7,7 +7,7 @@
     <PackageVersion Include="Azure.Identity" Version="1.18.0" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.27.0" />
     <PackageVersion Include="Azure.Storage.Queues" Version="12.25.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.5" />
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.82.1" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="4.5.0" />
