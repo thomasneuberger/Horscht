@@ -13,6 +13,7 @@ COPY ["Directory.Packages.props", "."]
 COPY ["Horscht.Importer/Horscht.Importer.csproj", "Horscht.Importer/"]
 COPY ["Horscht.Contracts/Horscht.Contracts.csproj", "Horscht.Contracts/"]
 COPY ["Horscht.Logic/Horscht.Logic.csproj", "Horscht.Logic/"]
+COPY ["Horscht.ServiceDefaults/Horscht.ServiceDefaults.csproj", "Horscht.ServiceDefaults/"]
 RUN dotnet restore "./Horscht.Importer/Horscht.Importer.csproj"
 COPY . .
 WORKDIR "/src/Horscht.Importer"
