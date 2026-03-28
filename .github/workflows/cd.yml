@@ -125,6 +125,7 @@ jobs:
             apiHostname=${{ vars.DEV_API_HOSTNAME }} \
             authClientId=${{ vars.DEV_AUTH_CLIENT_ID }} \
             authClientSecret=${{ secrets.DEV_AUTH_CLIENT_SECRET }} \
+            aiLocation=${{ vars.AI_LOCATION }} \
             aiModelName=${{ env.AI_MODEL_NAME }} \
             aiModelVersion=${{ env.AI_MODEL_VERSION }} \
             aiModelDeploymentName=${{ env.AI_MODEL_DEPLOYMENT_NAME }} \
