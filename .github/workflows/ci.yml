@@ -16,3 +16,23 @@ jobs:
 
     - name: Build the Web image
       run: docker build . --file ./Horscht.Web/Dockerfile --tag horscht-web:latest
+
+  validateBicep:
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Bicep CLI
+      run: |
+        curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+        chmod +x bicep
+        sudo mv bicep /usr/local/bin/bicep
+
+    - name: Validate Bicep modules
+      working-directory: deployment
+      run: bicep build main.bicep
