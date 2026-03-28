@@ -7,6 +7,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  AI_MODEL_NAME: ${{ vars.AI_MODEL_NAME || 'gpt-4o' }}
+  AI_MODEL_VERSION: ${{ vars.AI_MODEL_VERSION || '2024-11-20' }}
+  AI_MODEL_DEPLOYMENT_NAME: ${{ vars.AI_MODEL_DEPLOYMENT_NAME || 'gpt-4o' }}
 
 jobs:
 

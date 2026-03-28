@@ -55,9 +55,22 @@ az deployment sub create `
 
 If `aiLocation` is not specified, the OpenAI service is deployed to the same region as the application.
 
-## GitHub Actions
+## GitHub Actions Workflow Variables
 
-The CD workflow (`cd.yml`) builds and pushes Docker images. Infrastructure provisioning (running the Bicep templates) is a separate manual step. The model name, version, and deployment name are passed as parameters when running the Bicep deployment directly (see [Bicep Parameters](#bicep-parameters) above).
+The model name, version, and deployment name can be configured using GitHub Actions [repository variables](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables) so they are shared across workflow runs without modifying the workflow file.
+
+### Setting Repository Variables
+
+1. Go to your GitHub repository → **Settings** → **Secrets and variables** → **Actions** → **Variables** tab.
+2. Add the following variables:
+
+| Variable | Example value | Description |
+|----------|---------------|-------------|
+| `AI_MODEL_NAME` | `gpt-4o` | Azure OpenAI model name |
+| `AI_MODEL_VERSION` | `2024-11-20` | Azure OpenAI model version |
+| `AI_MODEL_DEPLOYMENT_NAME` | `gpt-4o` | Name for the model deployment |
+
+If these variables are not set, the workflow falls back to the hardcoded defaults (`gpt-4o` / `2024-11-20`).
 
 ## Importer Configuration
 
