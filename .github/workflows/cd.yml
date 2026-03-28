@@ -116,13 +116,9 @@ jobs:
             aspNetEnvironment=Development \
             adminUserIds=${{ secrets.DEV_ADMIN_USER_IDS }} \
             containerEnvironmentId=${{ vars.DEV_CONTAINER_ENVIRONMENT_ID }} \
-            containerEnvironmentResourceGroupName=${{ vars.DEV_CONTAINER_ENVIRONMENT_RG }} \
-            containerEnvironmentName=${{ vars.DEV_CONTAINER_ENVIRONMENT_NAME }} \
             registryUsername=${{ vars.DEV_REGISTRY_USERNAME }} \
             registryPassword=${{ secrets.DEV_REGISTRY_PASSWORD }} \
             imageTag=${{ needs.buildAndPush.outputs.imageTag }} \
-            importerHostname=${{ vars.DEV_IMPORTER_HOSTNAME }} \
-            apiHostname=${{ vars.DEV_API_HOSTNAME }} \
             authClientId=${{ vars.DEV_AUTH_CLIENT_ID }} \
             authClientSecret=${{ secrets.DEV_AUTH_CLIENT_SECRET }} \
             aiLocation=${{ vars.AI_LOCATION }} \
@@ -132,22 +128,4 @@ jobs:
           --output json)
         echo "resourceGroupName=$(echo "$output" | jq -r '.properties.outputs.resourceGroupName.value')" >> $GITHUB_OUTPUT
         echo "importerAppName=$(echo "$output" | jq -r '.properties.outputs.importerAppName.value')" >> $GITHUB_OUTPUT
-        echo "importerCertificateId=$(echo "$output" | jq -r '.properties.outputs.importerCertificateId.value')" >> $GITHUB_OUTPUT
         echo "apiAppName=$(echo "$output" | jq -r '.properties.outputs.apiAppName.value')" >> $GITHUB_OUTPUT
-        echo "apiCertificateId=$(echo "$output" | jq -r '.properties.outputs.apiCertificateId.value')" >> $GITHUB_OUTPUT
-
-    - name: Bind Importer Hostname
-      run: |
-        az containerapp hostname bind \
-          -g ${{ steps.deploy.outputs.resourceGroupName }} \
-          -n ${{ steps.deploy.outputs.importerAppName }} \
-          --hostname ${{ vars.DEV_IMPORTER_HOSTNAME }} \
-          -c ${{ steps.deploy.outputs.importerCertificateId }}
-
-    - name: Bind API Hostname
-      run: |
-        az containerapp hostname bind \
-          -g ${{ steps.deploy.outputs.resourceGroupName }} \
-          -n ${{ steps.deploy.outputs.apiAppName }} \
-          --hostname ${{ vars.DEV_API_HOSTNAME }} \
-          -c ${{ steps.deploy.outputs.apiCertificateId }}
