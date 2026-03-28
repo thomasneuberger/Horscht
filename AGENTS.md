@@ -42,3 +42,4 @@
 - If adding API endpoints, create `Horscht.Api/Controllers/*` (there are currently no domain controllers there).
 - Keep storage names aligned with `AppStorageOptions` keys used by Logic (`UploadContainer`, `SongContainer`, `ImportQueue`, `SongTable`).
 - When changing auth, storage, or OpenAI wiring, update code and docs together (`AUTHENTICATION.md`, `ASPIRE.md`, `OPENAI.md`, `deployment/*.bicep`).
+- **Always run `bicep build deployment/main.bicep` after modifying any Bicep file** to verify all modules are still valid.
