@@ -118,7 +118,7 @@ jobs:
             containerEnvironmentId=${{ vars.DEV_CONTAINER_ENVIRONMENT_ID }} \
             containerEnvironmentResourceGroupName=${{ vars.DEV_CONTAINER_ENVIRONMENT_RG }} \
             containerEnvironmentName=${{ vars.DEV_CONTAINER_ENVIRONMENT_NAME }} \
-            registryUsername=${{ github.actor }} \
+            registryUsername=${{ vars.DEV_REGISTRY_USERNAME }} \
             registryPassword=${{ secrets.DEV_REGISTRY_PASSWORD }} \
             imageTag=${{ needs.buildAndPush.outputs.imageTag }} \
             importerHostname=${{ vars.DEV_IMPORTER_HOSTNAME }} \
