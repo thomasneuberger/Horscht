@@ -19,6 +19,11 @@ param authClientId string
 @secure()
 param authClientSecret string
 
+param aiEndpoint string
+@secure()
+param aiApiKey string
+param aiDeploymentName string
+
 var environmentVariables = [
   {
     name: 'Storage__ConnectionString'
@@ -40,6 +45,18 @@ var environmentVariables = [
     name: 'ASPNETCORE_ENVIRONMENT'
     value: aspNetEnvironment
   }
+  {
+    name: 'AzureOpenAI__Endpoint'
+    value: aiEndpoint
+  }
+  {
+    name: 'AzureOpenAI__ApiKey'
+    secretRef: 'ai-api-key'
+  }
+  {
+    name: 'AzureOpenAI__DeploymentName'
+    value: aiDeploymentName
+  }
 ]
 
 var providedSecrets = [
@@ -54,6 +71,10 @@ var providedSecrets = [
   {
     name: 'auth-client-secret'
     value: authClientSecret
+  }
+  {
+    name: 'ai-api-key'
+    value: aiApiKey
   }
 ]
 
