@@ -4,14 +4,10 @@ param adminUserIds string
 param aspNetEnvironment string
 
 param containerEnvironmentId string
-param containerEnvironmentResourceGroupName string
-param containerEnvironmentName string
 param registryUsername string
 @secure()
 param registryPassword string
 param imageTag string
-param importerHostname string
-param apiHostname string
 
 param authClientId string
 @secure()
@@ -62,12 +58,9 @@ module Importer 'importer.bicep' = {
 		aspNetEnvironment: aspNetEnvironment
 
 		containerEnvironmentId: containerEnvironmentId
-		containerEnvironmentResourceGroupName: containerEnvironmentResourceGroupName
-		containerEnvironmentName: containerEnvironmentName
 		imageTag: imageTag
 		registryUsername: registryUsername
 		registryPassword: registryPassword
-		hostname: importerHostname
 
 		storageconnectionString: Storage.outputs.connectionString
 		importQueueName: Storage.outputs.importQueueName
@@ -90,12 +83,9 @@ module Api 'api.bicep' = {
 		aspNetEnvironment: aspNetEnvironment
 
 		containerEnvironmentId: containerEnvironmentId
-		containerEnvironmentResourceGroupName: containerEnvironmentResourceGroupName
-		containerEnvironmentName: containerEnvironmentName
 		imageTag: imageTag
 		registryUsername: registryUsername
 		registryPassword: registryPassword
-		hostname: apiHostname
 
 		storageconnectionString: Storage.outputs.connectionString
 
@@ -106,8 +96,4 @@ module Api 'api.bicep' = {
 
 output resourceGroupName string = rg.name
 output importerAppName string = Importer.outputs.appName
-output importerHostname string = importerHostname
-output importerCertificateId string = Importer.outputs.certificateId
 output apiAppName string = Api.outputs.appName
-output apiHostname string = apiHostname
-output apiCertificateId string = Api.outputs.certificateId

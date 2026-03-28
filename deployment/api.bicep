@@ -15,13 +15,10 @@ param location string = resourceGroup().location
 param aspNetEnvironment string
 
 param containerEnvironmentId string
-param containerEnvironmentResourceGroupName string
-param containerEnvironmentName string
 param registryUsername string
 @secure()
 param registryPassword string
 param imageTag string
-param hostname string
 
 @secure()
 param storageconnectionString string
@@ -83,12 +80,6 @@ resource containerApp 'Microsoft.App/containerApps@2023-11-02-preview' = {
         targetPort: 8080
         transport: 'auto'
         allowInsecure: false
-        customDomains: [
-          {
-            name: hostname
-            bindingType: 'Disabled'
-          }
-        ]
       }
       registries: [
         {
@@ -139,20 +130,4 @@ resource containerApp 'Microsoft.App/containerApps@2023-11-02-preview' = {
   }
 }
 
-resource environmentResourceGroup 'Microsoft.Resources/resourceGroups@2023-07-01' existing = {
-  name: containerEnvironmentResourceGroupName
-  scope: subscription()
-}
-
-module Certificate 'managedCertificate.bicep' = {
-  name: 'ApiCertificate'
-  scope: environmentResourceGroup
-  params: {
-    location: location
-    containerEnvironmentName: containerEnvironmentName
-    hostname: hostname
-  }
-}
-
 output appName string = containerApp.name
-output certificateId string = Certificate.outputs.id
