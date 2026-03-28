@@ -4,25 +4,9 @@ on:
   push:
     branches: [ "master" ]
   workflow_dispatch:
-    inputs:
-      aiModelName:
-        description: 'Azure OpenAI model name (e.g. gpt-4o)'
-        required: false
-        default: ''
-      aiModelVersion:
-        description: 'Azure OpenAI model version (e.g. 2024-11-20)'
-        required: false
-        default: ''
-      aiModelDeploymentName:
-        description: 'Azure OpenAI model deployment name'
-        required: false
-        default: ''
 
 env:
   REGISTRY: ghcr.io
-  AI_MODEL_NAME: ${{ vars.AI_MODEL_NAME || inputs.aiModelName || 'gpt-4o' }}
-  AI_MODEL_VERSION: ${{ vars.AI_MODEL_VERSION || inputs.aiModelVersion || '2024-11-20' }}
-  AI_MODEL_DEPLOYMENT_NAME: ${{ vars.AI_MODEL_DEPLOYMENT_NAME || inputs.aiModelDeploymentName || 'gpt-4o' }}
 
 jobs:
 
