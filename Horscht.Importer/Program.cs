@@ -39,6 +39,9 @@ public class Program
         builder.Services.AddOptions<AppStorageOptions>()
             .Bind(builder.Configuration.GetSection("Storage"))
             .ValidateDataAnnotations();
+        builder.Services.AddOptions<AzureOpenAIOptions>()
+            .Bind(builder.Configuration.GetSection("AzureOpenAI"))
+            .ValidateDataAnnotations();
 
         builder.Services.AddImport();
 

@@ -138,6 +138,7 @@ Horscht.Deployment (infrastructure as code)
 - **Azure Queue Storage**: Message queue for asynchronous processing
 - **Azure AD/Microsoft Identity**: Authentication and authorization
 - **Azure Container Apps**: Hosting for the importer service
+- **Azure OpenAI**: AI capabilities for the importer service
 
 ### Key NuGet Packages
 - **Microsoft.Identity.Web**: Azure AD integration
@@ -146,6 +147,7 @@ Horscht.Deployment (infrastructure as code)
 - **Azure.Storage.Queues**: Queue storage client
 - **Azure.Data.Tables**: Table storage client
 - **Azure.Identity**: Azure authentication
+- **Azure.AI.OpenAI**: Azure OpenAI client
 - **z440.atl.core**: Audio metadata extraction library
 - **Swashbuckle.AspNetCore**: API documentation
 

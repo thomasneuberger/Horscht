@@ -31,6 +31,7 @@ For authentication setup, see [AUTHENTICATION.md](AUTHENTICATION.md).
 - **.NET Aspire** - Local development orchestration (see [ASPIRE.md](ASPIRE.md))
 - **Azure Storage** - Blob storage for files, Table storage for catalog, Queue storage for messaging
 - **Azure AD** - Authentication and authorization
+- **Azure OpenAI** - AI capabilities for the importer service
 - **Azure Container Apps** - Cloud hosting for background services
 - **ATL Library** - Audio metadata extraction
 
@@ -86,6 +87,7 @@ Horscht/
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed architecture, coding standards, and development guidelines
 - **[ASPIRE.md](ASPIRE.md)** - .NET Aspire integration for local development
 - **[AUTHENTICATION.md](AUTHENTICATION.md)** - Azure AD setup and authentication flow between components
+- **[OPENAI.md](OPENAI.md)** - Azure OpenAI setup, prerequisites, and configuration
 
 ## License
 

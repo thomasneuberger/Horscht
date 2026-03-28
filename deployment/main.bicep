@@ -17,6 +17,11 @@ param authClientId string
 @secure()
 param authClientSecret string
 
+param aiLocation string = location
+param aiModelName string
+param aiModelVersion string
+param aiModelDeploymentName string
+
 targetScope = 'subscription'
 
 var adminUserIdList = split(adminUserIds, ',')
@@ -33,6 +38,18 @@ module Storage 'storage.bicep' = {
 		environment: environment
 		location: location
 		adminUsers: adminUserIdList
+	}
+}
+
+module OpenAI 'openai.bicep' = {
+	scope: rg
+	name: 'OpenAI'
+	params: {
+		environment: environment
+		location: aiLocation
+		modelName: aiModelName
+		modelVersion: aiModelVersion
+		modelDeploymentName: aiModelDeploymentName
 	}
 }
 
@@ -57,6 +74,10 @@ module Importer 'importer.bicep' = {
 
 		authClientId: authClientId
 		authClientSecret: authClientSecret
+
+		aiEndpoint: OpenAI.outputs.endpoint
+		aiApiKey: OpenAI.outputs.apiKey
+		aiDeploymentName: OpenAI.outputs.deploymentName
 	}
 }
 
