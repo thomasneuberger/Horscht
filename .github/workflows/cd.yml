@@ -127,12 +127,13 @@ jobs:
             authClientSecret=${{ secrets.DEV_AUTH_CLIENT_SECRET }} \
             aiModelName=${{ env.AI_MODEL_NAME }} \
             aiModelVersion=${{ env.AI_MODEL_VERSION }} \
-            aiModelDeploymentName=${{ env.AI_MODEL_DEPLOYMENT_NAME }})
-        echo "resourceGroupName=$(echo $output | jq -r '.properties.outputs.resourceGroupName.value')" >> $GITHUB_OUTPUT
-        echo "importerAppName=$(echo $output | jq -r '.properties.outputs.importerAppName.value')" >> $GITHUB_OUTPUT
-        echo "importerCertificateId=$(echo $output | jq -r '.properties.outputs.importerCertificateId.value')" >> $GITHUB_OUTPUT
-        echo "apiAppName=$(echo $output | jq -r '.properties.outputs.apiAppName.value')" >> $GITHUB_OUTPUT
-        echo "apiCertificateId=$(echo $output | jq -r '.properties.outputs.apiCertificateId.value')" >> $GITHUB_OUTPUT
+            aiModelDeploymentName=${{ env.AI_MODEL_DEPLOYMENT_NAME }} \
+          --output json)
+        echo "resourceGroupName=$(echo "$output" | jq -r '.properties.outputs.resourceGroupName.value')" >> $GITHUB_OUTPUT
+        echo "importerAppName=$(echo "$output" | jq -r '.properties.outputs.importerAppName.value')" >> $GITHUB_OUTPUT
+        echo "importerCertificateId=$(echo "$output" | jq -r '.properties.outputs.importerCertificateId.value')" >> $GITHUB_OUTPUT
+        echo "apiAppName=$(echo "$output" | jq -r '.properties.outputs.apiAppName.value')" >> $GITHUB_OUTPUT
+        echo "apiCertificateId=$(echo "$output" | jq -r '.properties.outputs.apiCertificateId.value')" >> $GITHUB_OUTPUT
 
     - name: Bind Importer Hostname
       run: |
