@@ -21,6 +21,9 @@ jobs:
       contents: read
       packages: write
 
+    outputs:
+      imageTag: ${{ steps.imageTag.outputs.tag }}
+
     steps:
     - uses: actions/checkout@v4
 
@@ -76,3 +79,73 @@ jobs:
         push: true
         tags: ${{ steps.metaImporter.outputs.tags }}
         labels: ${{ steps.metaImporter.outputs.labels }}
+
+  deploy:
+
+    needs: buildAndPush
+
+    runs-on: ubuntu-latest
+
+    environment: dev
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Azure Login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Deploy Azure Resources
+      id: deploy
+      working-directory: deployment
+      run: |
+        output=$(az deployment sub create \
+          --location ${{ vars.DEV_LOCATION }} \
+          --name Horscht \
+          --template-file main.bicep \
+          --parameters \
+            environment=dev \
+            location=${{ vars.DEV_LOCATION }} \
+            aspNetEnvironment=Development \
+            adminUserIds=${{ secrets.DEV_ADMIN_USER_IDS }} \
+            containerEnvironmentId=${{ vars.DEV_CONTAINER_ENVIRONMENT_ID }} \
+            containerEnvironmentResourceGroupName=${{ vars.DEV_CONTAINER_ENVIRONMENT_RG }} \
+            containerEnvironmentName=${{ vars.DEV_CONTAINER_ENVIRONMENT_NAME }} \
+            registryUsername=${{ github.actor }} \
+            registryPassword=${{ secrets.DEV_REGISTRY_PASSWORD }} \
+            imageTag=${{ needs.buildAndPush.outputs.imageTag }} \
+            importerHostname=${{ vars.DEV_IMPORTER_HOSTNAME }} \
+            apiHostname=${{ vars.DEV_API_HOSTNAME }} \
+            authClientId=${{ vars.DEV_AUTH_CLIENT_ID }} \
+            authClientSecret=${{ secrets.DEV_AUTH_CLIENT_SECRET }} \
+            aiModelName=${{ env.AI_MODEL_NAME }} \
+            aiModelVersion=${{ env.AI_MODEL_VERSION }} \
+            aiModelDeploymentName=${{ env.AI_MODEL_DEPLOYMENT_NAME }})
+        echo "resourceGroupName=$(echo $output | jq -r '.properties.outputs.resourceGroupName.value')" >> $GITHUB_OUTPUT
+        echo "importerAppName=$(echo $output | jq -r '.properties.outputs.importerAppName.value')" >> $GITHUB_OUTPUT
+        echo "importerCertificateId=$(echo $output | jq -r '.properties.outputs.importerCertificateId.value')" >> $GITHUB_OUTPUT
+        echo "apiAppName=$(echo $output | jq -r '.properties.outputs.apiAppName.value')" >> $GITHUB_OUTPUT
+        echo "apiCertificateId=$(echo $output | jq -r '.properties.outputs.apiCertificateId.value')" >> $GITHUB_OUTPUT
+
+    - name: Bind Importer Hostname
+      run: |
+        az containerapp hostname bind \
+          -g ${{ steps.deploy.outputs.resourceGroupName }} \
+          -n ${{ steps.deploy.outputs.importerAppName }} \
+          --hostname ${{ vars.DEV_IMPORTER_HOSTNAME }} \
+          -c ${{ steps.deploy.outputs.importerCertificateId }}
+
+    - name: Bind API Hostname
+      run: |
+        az containerapp hostname bind \
+          -g ${{ steps.deploy.outputs.resourceGroupName }} \
+          -n ${{ steps.deploy.outputs.apiAppName }} \
+          --hostname ${{ vars.DEV_API_HOSTNAME }} \
+          -c ${{ steps.deploy.outputs.apiCertificateId }}
