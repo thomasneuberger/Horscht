@@ -11,11 +11,16 @@ internal class ImportService : IImportService
 {
     private readonly IOptions<AppStorageOptions> _storageOptions;
     private readonly IStorageClientProvider _storageClientProvider;
+    private readonly ISongMetadataExtractionService _songMetadataExtractionService;
 
-    public ImportService(IOptions<AppStorageOptions> storageOptions, IStorageClientProvider storageClientProvider)
+    public ImportService(
+        IOptions<AppStorageOptions> storageOptions,
+        IStorageClientProvider storageClientProvider,
+        ISongMetadataExtractionService songMetadataExtractionService)
     {
         _storageOptions = storageOptions;
         _storageClientProvider = storageClientProvider;
+        _songMetadataExtractionService = songMetadataExtractionService;
     }
 
     public async Task ImportFile(string filename, CancellationToken cancellationToken)
@@ -46,11 +51,13 @@ internal class ImportService : IImportService
 
                 Console.WriteLine(track.Artist);
 
+                var (artist, title) = await ResolveSongMetadata(track, filename, cancellationToken);
+
                 var song = new Song
                 {
                     RowKey = Guid.NewGuid().ToString(),
-                    Artist = track.Artist,
-                    Title = track.Title,
+                    Artist = artist,
+                    Title = title,
                     Filename = songFileClient.Name,
                     Uri = songFileClient.Uri.AbsoluteUri
                 };
@@ -81,5 +88,30 @@ internal class ImportService : IImportService
             Console.WriteLine(ex);
             throw;
         }
+    }
+
+    private async Task<(string Artist, string Title)> ResolveSongMetadata(Track track, string filename, CancellationToken cancellationToken)
+    {
+        var artist = NormalizeMetadataValue(track.Artist);
+        var title = NormalizeMetadataValue(track.Title);
+
+        if (string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(title))
+        {
+            var extractedMetadata = await _songMetadataExtractionService.TryExtractFromFilename(filename, cancellationToken);
+            artist = string.IsNullOrWhiteSpace(artist) ? NormalizeMetadataValue(extractedMetadata?.Artist) : artist;
+            title = string.IsNullOrWhiteSpace(title) ? NormalizeMetadataValue(extractedMetadata?.Title) : title;
+        }
+
+        artist ??= "Unknown Artist";
+
+        title ??= NormalizeMetadataValue(Path.GetFileNameWithoutExtension(filename));
+        title ??= "Unknown Title";
+
+        return (artist, title);
+    }
+
+    private static string? NormalizeMetadataValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 }

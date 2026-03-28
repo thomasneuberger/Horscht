@@ -29,6 +29,9 @@ public class Program
         builder.Services.AddJsonSerializerDefaults();
 
         builder.Services.AddSingleton<IStorageClientProvider, StorageClientProvider>();
+        builder.Services.AddHttpClient<AiSongMetadataExtractionService>();
+        builder.Services.AddSingleton<ISongMetadataExtractionService>(serviceProvider =>
+            serviceProvider.GetRequiredService<AiSongMetadataExtractionService>());
 
         builder.Services.AddHostedService<StorageInitializer>();
         builder.Services.AddHostedService<FileImport>();
