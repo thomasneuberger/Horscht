@@ -121,7 +121,7 @@ Horscht.Deployment (infrastructure as code)
 #### Horscht.Deployment
 **Purpose**: Infrastructure as Code
 - Bicep templates for Azure deployment
-- Defines storage accounts, container apps, certificates
+- Defines storage accounts and container apps
 - Environment configuration
 
 ## Technology Stack

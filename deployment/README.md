@@ -9,7 +9,6 @@ This folder contains the Infrastructure as Code (IaC) templates and scripts for 
 - **importer.bicep** - Container App deployment for the Importer service
 - **api.bicep** - Container App deployment for the API service (Backend for Frontend)
 - **builtInRoles.bicep** - Azure built-in role definitions
-- **managedCertificate.bicep** - Managed certificate configuration for custom domains
 - **Deploy-AzureResourceGroup.ps1** - PowerShell deployment script
 
 ## Azure Resources Created
@@ -42,7 +41,6 @@ The [CD workflow](../.github/workflows/cd.yml) automatically deploys to the **de
 
 1. Builds and pushes Docker images to GitHub Container Registry (GHCR)
 2. Deploys all Azure resources using the Bicep templates
-3. Binds custom hostnames for the Importer and API container apps
 
 ### GitHub Secrets
 
@@ -65,10 +63,6 @@ The following repository variables must be configured:
 |----------|-------------|---------|
 | `DEV_LOCATION` | Azure region for the deployment | `westeurope` |
 | `DEV_CONTAINER_ENVIRONMENT_ID` | Resource ID of the existing Azure Container Apps Environment | `/subscriptions/.../containerEnvironments/ce-horscht` |
-| `DEV_CONTAINER_ENVIRONMENT_RG` | Resource group of the Container Apps Environment | `rg-container-env` |
-| `DEV_CONTAINER_ENVIRONMENT_NAME` | Name of the Container Apps Environment | `ce-horscht` |
-| `DEV_IMPORTER_HOSTNAME` | Custom domain for the Importer container app | `importer.example.com` |
-| `DEV_API_HOSTNAME` | Custom domain for the API container app | `api.example.com` |
 | `DEV_AUTH_CLIENT_ID` | Client ID of the Azure AD app registration used by the application | |
 | `AI_MODEL_NAME` | Azure OpenAI model name (optional, defaults to `gpt-4o`) | `gpt-4o` |
 | `AI_MODEL_VERSION` | Azure OpenAI model version (optional, defaults to `2024-11-20`) | `2024-11-20` |
@@ -104,13 +98,9 @@ The CD workflow uses [OpenID Connect (OIDC)](https://docs.github.com/en/actions/
     -aspNetEnvironment "Development" `
     -adminUserIds "<user-object-id>" `
     -containerEnvironmentId "<container-env-resource-id>" `
-    -containerEnvironmentResourceGroupName "<container-env-rg>" `
-    -containerEnvironmentName "<container-env-name>" `
     -registryUsername "<github-username>" `
     -registryPassword "<ghcr-pat>" `
     -imageTag "<image-tag>" `
-    -importerHostname "<importer-hostname>" `
-    -apiHostname "<api-hostname>" `
     -authClientId "<azure-ad-client-id>" `
     -authClientSecret "<azure-ad-client-secret>" `
     -aiModelName "gpt-4o" `
@@ -131,13 +121,9 @@ az deployment sub create \
         aspNetEnvironment=Development \
         adminUserIds="<user-object-id>" \
         containerEnvironmentId="<container-env-resource-id>" \
-        containerEnvironmentResourceGroupName="<container-env-rg>" \
-        containerEnvironmentName="<container-env-name>" \
         registryUsername="<github-username>" \
         registryPassword="<ghcr-pat>" \
         imageTag="<image-tag>" \
-        importerHostname="<importer-hostname>" \
-        apiHostname="<api-hostname>" \
         authClientId="<azure-ad-client-id>" \
         authClientSecret="<azure-ad-client-secret>" \
         aiModelName="gpt-4o" \

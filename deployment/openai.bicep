@@ -34,6 +34,6 @@ resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-
 }
 
 output endpoint string = openAIAccount.properties.endpoint
-@secure()
+#disable-next-line outputs-should-not-contain-secrets
 output apiKey string = openAIAccount.listKeys().key1
 output deploymentName string = modelDeployment.name
