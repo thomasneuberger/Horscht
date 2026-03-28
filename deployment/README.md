@@ -110,8 +110,12 @@ The CD workflow uses [OpenID Connect (OIDC)](https://docs.github.com/en/actions/
     -registryPassword "<ghcr-pat>" `
     -imageTag "<image-tag>" `
     -importerHostname "<importer-hostname>" `
+    -apiHostname "<api-hostname>" `
     -authClientId "<azure-ad-client-id>" `
-    -authClientSecret "<azure-ad-client-secret>"
+    -authClientSecret "<azure-ad-client-secret>" `
+    -aiModelName "gpt-4o" `
+    -aiModelVersion "2024-11-20" `
+    -aiModelDeploymentName "gpt-4o"
 ```
 
 ### Using Azure CLI

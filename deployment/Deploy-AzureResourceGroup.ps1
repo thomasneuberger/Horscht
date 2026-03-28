@@ -16,8 +16,12 @@ Param(
     [string] $registryPassword,
     [string] $imageTag,
     [string] $importerHostname,
+    [string] $apiHostname,
     [string] $authClientId,
-    [string] $authClientSecret
+    [string] $authClientSecret,
+    [string] $aiModelName,
+    [string] $aiModelVersion,
+    [string] $aiModelDeploymentName
 )
 
 $ErrorActionPreference = 'Stop'
@@ -38,8 +42,12 @@ $outputJson = az deployment sub create --location $Location `
                            registryPassword=$registryPassword `
                            imageTag=$imageTag `
                            importerHostname=$importerHostname `
+                           apiHostname=$apiHostname `
                            authClientId=$authClientId `
                            authClientSecret=$authClientSecret `
+                           aiModelName=$aiModelName `
+                           aiModelVersion=$aiModelVersion `
+                           aiModelDeploymentName=$aiModelDeploymentName `
                          --subscription $Subscription
 
 $output = $outputJson | ConvertFrom-Json
@@ -49,4 +57,8 @@ $resourceGroupName = $output.properties.outputs.resourceGroupName.value
 $importerAppName = $output.properties.outputs.importerAppName.value
 $importerCertificateId = $output.properties.outputs.importerCertificateId.value
 
+$apiAppName = $output.properties.outputs.apiAppName.value
+$apiCertificateId = $output.properties.outputs.apiCertificateId.value
+
 az containerapp hostname bind --subscription $Subscription -g $resourceGroupName -n $importerAppName --hostname $importerHostname -c $importerCertificateId | Out-Null
+az containerapp hostname bind --subscription $Subscription -g $resourceGroupName -n $apiAppName --hostname $apiHostname -c $apiCertificateId | Out-Null
