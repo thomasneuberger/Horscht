@@ -11,6 +11,7 @@ internal class FileImport : IObservableHostedService, IDisposable
 {
     private readonly IImportService _importService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly ILogger<FileImport> _logger;
 
     private readonly QueueClient _queueClient;
 
@@ -18,12 +19,13 @@ internal class FileImport : IObservableHostedService, IDisposable
 
     private State _state = State.New;
 
-    public FileImport(IOptions<ImporterStorageOptions> storageOptions, IImportService importService, JsonSerializerOptions jsonSerializerOptions)
+    public FileImport(IOptions<ImporterStorageOptions> storageOptions, IImportService importService, JsonSerializerOptions jsonSerializerOptions, ILogger<FileImport> logger)
     {
         Console.WriteLine($"FileImport: {InstanceId}");
 
         _importService = importService;
         _jsonSerializerOptions = jsonSerializerOptions;
+        _logger = logger;
         _queueClient = new QueueClient(storageOptions.Value.ConnectionString, storageOptions.Value.ImportQueue);
     }
 
@@ -57,14 +59,16 @@ internal class FileImport : IObservableHostedService, IDisposable
         {
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
-                var response = await _queueClient.ReceiveMessageAsync(cancellationToken: _cancellationTokenSource.Token);
+                var response =
+                    await _queueClient.ReceiveMessageAsync(cancellationToken: _cancellationTokenSource.Token);
                 if (response.HasValue && response.Value is not null)
                 {
                     var queueMessage = response.Value;
 
                     Console.WriteLine($"Message received: {queueMessage.MessageText}");
 
-                    var importMessage = JsonSerializer.Deserialize<ImportMessage>(queueMessage.MessageText, _jsonSerializerOptions);
+                    var importMessage =
+                        JsonSerializer.Deserialize<ImportMessage>(queueMessage.MessageText, _jsonSerializerOptions);
                     if (importMessage is not null)
                     {
                         await _importService.ImportFile(importMessage.FileName, _cancellationTokenSource.Token);
@@ -81,6 +85,11 @@ internal class FileImport : IObservableHostedService, IDisposable
         }
         catch (TaskCanceledException)
         {
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while listening to queue messages.");
+            throw;
         }
     }
 
