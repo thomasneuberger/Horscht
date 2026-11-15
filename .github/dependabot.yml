@@ -6,17 +6,10 @@ updates:
       interval: weekly
 
   - package-ecosystem: docker
-    directory: /Horscht.Api
-    schedule:
-      interval: weekly
-
-  - package-ecosystem: docker
-    directory: /Horscht.Importer
-    schedule:
-      interval: weekly
-
-  - package-ecosystem: docker
-    directory: /Horscht.Web
+    directories:
+      - /Horscht.Api
+      - /Horscht.Importer
+      - /Horscht.Web
     schedule:
       interval: weekly
 
